@@ -1,0 +1,2050 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Doctor Profile Entry + Export (Protected)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://easyhealths.com/react/favicon-32x32.png" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+      rel="stylesheet" />
+
+    <!-- <link rel="stylesheet" href="styles.css" /> -->
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        background-color: #ffffffe9;
+      }
+
+      .container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 0.1rem;
+        justify-content: space-between;
+      }
+
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.2rem;
+        background-color: #a9e2f7;
+        padding-inline: 0.1rem;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+      }
+
+      #landpageheading {
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: auto;
+        height: auto;
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: 0%;
+      }
+
+      .hint-container {
+        align-items: center;
+        justify-items: center;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        background-color: #f5f5f5;
+      }
+
+      .hint {
+        font-size: 0.9rem;
+        color: #374151;
+        margin-top: auto;
+        margin-bottom: auto;
+        text-align: center;
+      }
+
+      .req::after {
+        content: " *";
+        color: #dc3545;
+        font-weight: 700;
+      }
+
+      .field-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 12px;
+      }
+
+      .form-section-title {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #111827;
+        margin: 6px 0 2px;
+      }
+
+      .form-section-sub {
+        font-size: 0.82rem;
+        color: #6b7280;
+        margin: 0 0 6px;
+      }
+
+      /* ---------- Languages dropdown (multi-select) ---------- */
+      .multi-dd .dropdown-toggle {
+        width: 100%;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 0.5rem;
+        background: #fff;
+      }
+
+      .multi-dd .dropdown-toggle:focus {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+      }
+
+      .multi-dd .dropdown-menu {
+        width: 100%;
+        max-height: 280px;
+        overflow: auto;
+        padding: 10px;
+        border-radius: 12px;
+      }
+
+      .multi-dd .dd-search {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        padding-bottom: 8px;
+        z-index: 5;
+      }
+
+      .multi-dd .dd-search input {
+        border-radius: 10px;
+      }
+
+      .multi-dd .dd-items {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .multi-dd .dd-item {
+        display: flex;
+        gap: 2px;
+        align-items: center;
+        justify-content: start;
+        padding: 8px 10px;
+        border: 1px solid #f1f5f9;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      .multi-dd .dd-item:hover {
+        background: #f8fafc;
+      }
+
+      .multi-dd .badge-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      .multi-dd .lang-badge {
+        background: #eef2ff;
+        color: #3730a3;
+        border: 1px solid #e0e7ff;
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+      }
+
+      .multi-dd .lang-badge button {
+        border: none;
+        background: transparent;
+        margin-left: 6px;
+        color: #3730a3;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .multi-dd.is-invalid .dropdown-toggle {
+        border-color: #dc3545;
+      }
+
+      /* Nice compact button text wrapping */
+      #langBtnText {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      input,
+      textarea {
+        cursor: text;
+      }
+
+      button,
+select,
+.btn,
+/* .form-control */
+.form-select,
+.dropdown-menu
+/* [role="button"], */
+/* [tabindex]:not([tabindex="-1"])  */ {
+        cursor: pointer;
+      }
+
+      /* Searchable Dropdown Styling */
+      .form-select[readonly] {
+        background-color: white;
+      }
+      input[list] {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%236b7280'%3e%3cpath d='M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        background-size: 16px;
+      }
+      /* Datalist suggestions */
+      input[list]::-webkit-calendar-picker-indicator {
+        display: none;
+      }
+
+      /* ========== CUSTOM SPECIALIST DROPDOWN ========== */
+      .dropdown {
+        position: relative;
+      }
+
+      #specialistDropdown,
+      #councilDropdown {
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        z-index: 1060 !important;
+        width: 100% !important;
+        max-height: 240px;
+        overflow-y: auto;
+        border: 1px solid #ced4da;
+        border-radius: 0 0 0.375rem 0.375rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        /* background: white; */
+      }
+
+      .suggest-item {
+        padding: 10px 12px !important;
+        cursor: pointer !important;
+        border: none !important;
+        width: 100% !important;
+        text-align: left !important;
+      }
+
+      .suggest-item:hover {
+        background: #f8f9fa !important;
+      }
+
+      /* Make all dropdown menus scrollable */
+      .dropdown-menu {
+        max-height: 280px;
+        overflow-y: auto;
+      }
+
+      img {
+        max-width: 200px;
+        width: 15vw;
+        height: auto;
+        min-width: 120px;
+      }
+
+      footer {
+        padding: 0.5rem;
+        background-color: #a9e2f7;
+        border-top: 1px solid #e9ecef;
+        text-align: center;
+      }
+
+      /* Remove ALL green ticks & validation from dropdown search bars */
+      #drSpecialistSearch,
+      #drCouncilSearch,
+      #langSearch {
+        background-image: none !important;
+      }
+
+      /* Block HTML5 :valid green tick & borders */
+      #drSpecialistSearch:valid,
+      #drCouncilSearch:valid,
+      #langSearch:valid,
+      #drSpecialistSearch:not(:placeholder-shown),
+      #drCouncilSearch:not(:placeholder-shown),
+      #langSearch:not(:placeholder-shown) {
+        background-image: none !important;
+        border-color: #ced4da !important; /* Default gray */
+        box-shadow: none !important;
+      }
+
+      /* Block Bootstrap .is-valid green */
+      #drSpecialistSearch.is-valid,
+      #drCouncilSearch.is-valid,
+      #langSearch.is-valid {
+        background-image: none !important;
+        border-color: #ced4da !important; /* Force gray */
+      }
+
+      /* Focus state - blue only, no green */
+      #drSpecialistSearch:focus,
+      #drCouncilSearch:focus,
+      #langSearch:focus {
+        background-image: none !important;
+        border-color: #86b7fe !important; /* Bootstrap focus blue */
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+      }
+    </style>
+  </head>
+
+  <script>
+    // ====== COMPLETE SECURITY PROTECTION (2026) ======
+    (function () {
+      "use strict";
+
+      // 1. Disable right-click & context menu
+      document.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        return false;
+      });
+
+      // 2. Disable ALL DevTools & View Source shortcuts (COMBINED)
+      document.addEventListener(
+        "keydown",
+        function (e) {
+          const ctrlKey = e.ctrlKey;
+          const shiftKey = e.shiftKey;
+          const key = e.key.toLowerCase();
+
+          // F12, Ctrl+Shift+I/J/C/K, Ctrl+U, Ctrl+Shift+U
+          if (
+            e.key === "F12" ||
+            (ctrlKey &&
+              shiftKey &&
+              (e.key === "I" ||
+                e.key === "J" ||
+                e.key === "C" ||
+                e.key === "K")) ||
+            (ctrlKey && key === "u") ||
+            (ctrlKey && shiftKey && key === "u")
+          ) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+          }
+
+          // Ctrl+A/C/V/X/S/P/Ins (Select/Copy/Paste/Cut/Save/Print)
+          if (
+            ctrlKey &&
+            (key === "a" ||
+              key === "c" ||
+              key === "v" ||
+              key === "x" ||
+              key === "s" ||
+              key === "p" ||
+              e.key === "Insert")
+          ) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+          }
+
+          // Ctrl+Alt combinations
+          if (ctrlKey && e.altKey) {
+            e.preventDefault();
+            return false;
+          }
+        },
+        true,
+      );
+
+      // 3. Disable text selection, drag, print
+      document.addEventListener("selectstart", (e) => e.preventDefault());
+      document.addEventListener("dragstart", (e) => e.preventDefault());
+      window.addEventListener("beforeprint", () => false);
+
+      // 4. Disable developer tools detection (multiple methods)
+      let devtoolsOpen = false;
+
+      // Method 1: Screen size detection
+      const threshold = 160;
+      setInterval(() => {
+        if (
+          window.outerHeight - window.innerHeight > threshold ||
+          window.outerWidth - window.innerWidth > threshold
+        ) {
+          if (!devtoolsOpen) {
+            devtoolsOpen = true;
+            lockdown();
+          }
+        }
+      }, 500);
+
+      // Method 2: Console detection
+      (function () {
+        const consoleCheck = () => {
+          if (
+            window.console &&
+            (console.log._hijacked ||
+              window.devtools ||
+              window.outerWidth - window.innerWidth > 200)
+          ) {
+            lockdown();
+          }
+        };
+        setInterval(consoleCheck, 1000);
+      })();
+
+      // Method 3: Debugger detection
+      (function detectDebugger() {
+        const start = performance.now();
+        debugger;
+        const end = performance.now();
+        if (end - start > 100) {
+          lockdown();
+        }
+        setTimeout(detectDebugger, 2000);
+      })();
+
+      // 5. Mobile long-press & touch menus
+      let touchTimer;
+      document.addEventListener("touchstart", (e) => {
+        touchTimer = setTimeout(() => e.preventDefault(), 500);
+      });
+      document.addEventListener("touchend", () => clearTimeout(touchTimer));
+      document.addEventListener("touchmove", () => clearTimeout(touchTimer));
+
+      // 6. LOCKDOWN function (triggers on detection)
+      function lockdown() {
+        document.body.innerHTML = `
+          <div style="background: #dc3545; color: white; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 2rem; font-family: system-ui;">
+            <h1 style="font-size: 3rem; margin-bottom: 1rem;">🚫 ACCESS DENIED</h1>
+            <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Developer Tools Detected</h2>
+            <p style="max-width: 500px; line-height: 1.6;">This protected interface requires authorized access only.</p>
+            <p style="margin-top: 2rem; opacity: 0.8;">- EasyTech ITSolutions Private Limited </p>
+          </div>
+        `;
+        document.onkeydown = () => false;
+        window.onbeforeunload = () => "Unauthorized access detected";
+      }
+
+      // 7. Prevent iframe embedding
+      if (window !== window.top) {
+        window.top.location = window.location;
+      }
+
+      // 8. CSS Protection (disable user selection)
+      const style = document.createElement("style");
+      style.textContent = `
+        * { user-select: none !important; -webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; }
+        body { pointer-events: auto !important; }
+      `;
+      document.head.appendChild(style);
+    })();
+  </script>
+
+  <body>
+    <div class="container">
+      <div class="top-bar">
+        <div id="logo">
+          <a href="https://easyhealths.com/">
+            <img
+              src="https://easyhealths.com/react/ehlogo.webp"
+              alt="EasyHealths" />
+          </a>
+        </div>
+        <div id="landpageheading">
+          <h4 class="mb-1 mx-auto fs-3 fs-md-2 fs-sm-2">
+            Doctor Profile Entry
+          </h4>
+        </div>
+
+        <div class="d-flex gap-1">
+          <button id="openAddBtn" class="btn btn-primary fs-6 fs-md-4 px-1">
+            <i class="bi bi-plus-circle"></i> Add Doctor
+          </button>
+
+          <button
+            id="exportBtn"
+            class="btn btn-success d-none fs-6 fs-md-4 px-1">
+            <i class="bi bi-download"></i> Export to Excel
+          </button>
+        </div>
+      </div>
+
+      <div id="hintContainer" class="hint-container">
+        <div class="hint">
+          Add doctors one-by-one, then export a protected (read-only) Excel.
+        </div>
+      </div>
+
+      <div id="tableContainer" class="table-responsive d-none">
+        <table
+          id="doctorsTable"
+          class="table table-striped table-hover align-middle mt-3">
+          <thead class="table-dark">
+            <tr>
+              <th>Doctor Name</th>
+              <th>Mobile</th>
+              <th>Sex</th>
+              <th>Specialist</th>
+              <th>Registration No.</th>
+              <th>Medical Council / State</th>
+              <th>Designation</th>
+              <th>Qualification</th>
+              <th>Experience (Years)</th>
+              <th>Languages</th>
+              <th>Reporting Days</th>
+              <th>Doctor Fees</th>
+              <th>Clinic Charge</th>
+              <th>Google Reviews</th>
+              <th style="width: 110px">Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="doctorModal"
+        tabindex="-1"
+        aria-labelledby="doctorModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <form id="doctorForm" novalidate autocomplete="off">
+              <div class="modal-header">
+                <h5 class="modal-title" id="doctorModalLabel">
+                  <strong>Add Doctor</strong>
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"></button>
+              </div>
+
+              <div class="modal-body">
+                <div class="field-card">
+                  <div class="form-section-title">Basic Info</div>
+                  <div class="form-section-sub">
+                    Enter doctor details and add to the table below.
+                  </div>
+
+                  <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                      <label class="form-label req" for="drName"
+                        >Doctor Name</label
+                      >
+                      <input
+                        type="text"
+                        id="drName"
+                        class="form-control"
+                        maxlength="120"
+                        pattern="[A-Za-z\s.]+"
+                        placeholder="e.g. Dr. Amit Roy" />
+                      <div class="invalid-feedback">
+                        Doctor name is required (A-Z, a-z, space, dot, at least
+                        2 capital letters)
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                      <label class="form-label req" for="drMobile"
+                        >Mobile (10 digits, starts 6-9)</label
+                      >
+                      <input
+                        type="tel"
+                        id="drMobile"
+                        class="form-control"
+                        required
+                        inputmode="numeric"
+                        pattern="[6-9]\d{9}"
+                        maxlength="10"
+                        placeholder="e.g. 9876543210" />
+                      <div class="invalid-feedback">
+                        Enter a valid / unique 10-digit mobile starting with
+                        6-9.
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <label class="form-label req" for="drSex">Sex</label>
+                      <select id="drSex" class="form-select" required>
+                        <option value="" selected disabled>Select</option>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
+                        <option value="OTHER">Other</option>
+                      </select>
+                      <div class="invalid-feedback">Please select sex.</div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <label class="form-label req" for="specialistDropdown"
+                        >Specialist</label
+                      >
+                      <div class="dropdown">
+                        <input
+                          type="text"
+                          id="drSpecialistSearch"
+                          class="form-control"
+                          placeholder="Search specialist..."
+                          autocomplete="off"
+                          required />
+                        <div
+                          id="specialistDropdown"
+                          class="dropdown-menu"></div>
+                      </div>
+                      <input type="hidden" id="drSpecialist" required />
+                      <div class="invalid-feedback">
+                        Please select specialist.
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <label class="form-label req" for="councilDropdown"
+                        >Medical Council / State</label
+                      >
+                      <div class="dropdown">
+                        <input
+                          type="text"
+                          id="drCouncilSearch"
+                          class="form-control"
+                          placeholder="Search council/state..."
+                          autocomplete="off"
+                          required />
+                        <div id="councilDropdown" class="dropdown-menu"></div>
+                      </div>
+                      <input type="hidden" id="drCouncil" required />
+                      <div class="invalid-feedback">Please select council.</div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <label class="form-label" id="regnLabel" for="drRegnNo"
+                        >Registration No.</label
+                      >
+                      <input
+                        type="text"
+                        id="drRegnNo"
+                        class="form-control"
+                        maxlength="30"
+                        placeholder="e.g. WB-12345" />
+                      <div class="invalid-feedback">
+                        Registration number is required (and must be unique)
+                        when council is not "Others".
+                      </div>
+                      <div class="form-text">
+                        If council is not "Others", this becomes mandatory.
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <label class="form-label" for="drDesignation"
+                        >Designation</label
+                      >
+                      <input
+                        type="text"
+                        id="drDesignation"
+                        class="form-control"
+                        maxlength="80"
+                        placeholder="e.g. Consultant" />
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <label class="form-label" for="drQualification"
+                        >Qualification</label
+                      >
+                      <input
+                        type="text"
+                        id="drQualification"
+                        class="form-control"
+                        maxlength="120"
+                        placeholder="e.g. MBBS, MD"
+                        required />
+                    </div>
+
+                    <!-- Languages dropdown style -->
+                    <div class="col-12 col-lg-4">
+                      <label class="form-label req" for="langMulti"
+                        >Languages</label
+                      >
+
+                      <div id="langMulti" class="multi-dd dropdown">
+                        <button
+                          class="dropdown-toggle"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          data-bs-auto-close="outside"
+                          aria-expanded="false">
+                          <span id="langBtnText">Select languages</span>
+                          <!-- <i class="bi bi-chevron-down"></i> -->
+                        </button>
+
+                        <div class="dropdown-menu">
+                          <div class="dd-search">
+                            <input
+                              id="langSearch"
+                              class="form-control"
+                              placeholder="Search language..." />
+                          </div>
+                          <div id="langList" class="dd-items"></div>
+                        </div>
+
+                        <div id="langBadges" class="badge-wrap"></div>
+                        <div
+                          class="invalid-feedback d-block"
+                          id="langError"
+                          style="display: none">
+                          Please select at least one language.
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Right numbers -->
+                    <div class="col-12 col-lg-8">
+                      <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                          <label class="form-label" for="drExperience"
+                            >Experience</label
+                          >
+                          <input
+                            type="number"
+                            id="drExperience"
+                            class="form-control"
+                            placeholder="years"
+                            min="0"
+                            step="1"
+                            required />
+                          <div class="invalid-feedback">
+                            Must be a non-negative integer.
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                          <label class="form-label" for="drReportingDay"
+                            >Reporting Days</label
+                          >
+                          <input
+                            type="number"
+                            id="drReportingDay"
+                            class="form-control"
+                            placeholder="days"
+                            min="0"
+                            step="1"
+                            required />
+                          <div class="invalid-feedback">
+                            Must be a non-negative integer.
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                          <label class="form-label" for="drFees"
+                            >Doctor Fees</label
+                          >
+                          <input
+                            type="number"
+                            id="drFees"
+                            class="form-control"
+                            placeholder="₹"
+                            min="0"
+                            step="1"
+                            required />
+                          <div class="invalid-feedback">
+                            Must be a non-negative integer.
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                          <label class="form-label" for="drClinicCharge"
+                            >Clinic Charge</label
+                          >
+                          <input
+                            type="number"
+                            id="drClinicCharge"
+                            class="form-control"
+                            placeholder="₹"
+                            min="0"
+                            step="1"
+                            required />
+                          <div class="invalid-feedback">
+                            Must be a non-negative integer.
+                          </div>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                          <label class="form-label" for="drGoogleReviews"
+                            >Google Reviews</label
+                          >
+                          <input
+                            type="number"
+                            id="drGoogleReviews"
+                            class="form-control"
+                            min="0"
+                            max="5"
+                            step="0.1"
+                            value="0" />
+                          <div class="invalid-feedback">
+                            Google reviews must be between 0 and 5.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /row -->
+                </div>
+                <!-- /card -->
+              </div>
+              <!-- /modal-body -->
+
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal">
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  id="modalSubmitBtn"
+                  class="btn btn-primary">
+                  <strong>Add Doctor</strong>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <footer>
+        &copy;2026.
+        <span>
+          <a href="https://easytechitsolutions.com/"
+            >EasyTech ITSolutions Private Limited</a
+          ></span
+        >
+        | All rights reserved.
+      </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+    <!-- <script src="script.js"></script> -->
+    <script>
+      // ====== Dropdown data ======
+      const SPECIALISTS = [
+        "Allergologist/Allergist",
+        "Anesthesiologist",
+        "Ayurvedic Doctor",
+        "Cardiac Surgeon",
+        "Cardiologist",
+        "Consultant Physician",
+        "Critical Care Specialist",
+        "Dentist",
+        "Dermatologist",
+        "Diabetologist",
+        "Dietitian",
+        "Endocrinologist",
+        "Gastroenterologist",
+        "General Physician",
+        "General Surgeon",
+        "Geriatrician",
+        "Gynecologist",
+        "Hematologist",
+        "Hepatologist",
+        "Homeopathic Doctor",
+        "Laparoscopy Surgeon",
+        "Neonatologist",
+        "Nephrologist",
+        "Neurologist",
+        "Neuropsychiatrist",
+        "Oncologist",
+        "Ophthalmologist",
+        "Optometrist",
+        "Orthopedist",
+        "Otolaryngologist",
+        "Pediatric Cardiologist",
+        "Pediatric Neurosurgeon",
+        "Pediatric Urologist",
+        "Pediatrician",
+        "Physiatrist",
+        "Physiotherapist",
+        "Plastic Surgeon",
+        "Proctologist",
+        "Psychiatrist",
+        "Psychologist",
+        "Pulmonologist",
+        "Radiologist",
+        "Rheumatologist",
+        "Sexologist",
+        "Speech Therapist",
+        "Transplant Surgeon",
+        "Urologist",
+      ];
+
+      // includes "Others" (conditional REGN_NO rule)
+      const COUNCILS = [
+        "Andhra Boards for Ayurveda and Homoeopathy",
+        "Andhra Pradesh Medical Council",
+        "Andhra Pradesh State Dental Council",
+        "Arunachal Pradesh Indian Medicine Council",
+        "Arunachal Pradesh Medical Council",
+        "Arunachal Pradesh State Dental Council",
+        "Assam Medical Council",
+        "Assam State Council of Indian Medicine",
+        "Assam State Dental Council",
+        "Bhartiya Chikitsa Parishad (Uttaranchal)",
+        "Bihar Medical Council",
+        "Bihar State Dental Council",
+        "Bhopal Medical Council",
+        "Board of Ayurvedic and Unani Systems of Medicine (Haryana)",
+        "Board of Ayurvedic and Unani Systems of Medicine (Himachal Pradesh)",
+        "Board of Ayurvedic and Unani Systems of Medicine (Jammu)",
+        "Board of Ayurvedic and Unani Systems of Medicine(Punjab)",
+        "Board of Ayurvedic and Unani Tibbi Systems of Medicines (U.P.)",
+        "Board of Indian Medicine (Rajasthan)",
+        "Bombay Medical Council",
+        "Chandigarh Medical Council",
+        "Chattisgarh Board of Ayurvedic and Unani System of Medicine and Naturopathy",
+        "Chattisgarh Medical Council",
+        "Chattisgarh State Dental Council",
+        "Delhi Medical Council",
+        "Delhi State Dental Council",
+        "Dental Council of Chandigarh",
+        "Directorate of Ayush (Delhi Board of Indian Systems of Medicine)",
+        "Goa Board of Indian Systems of Medicine and Homoeopathy",
+        "Goa Medical Council",
+        "Goa State Dental Council",
+        "Gujarat Board of Ayurvedic and Unani Systems of Medicine",
+        "Gujarat Medical Council",
+        "Gujarat State Dental Council",
+        "Haryana Medical Council",
+        "Haryana State Dental Council",
+        "Himachal Pradesh Medical Council",
+        "Himachal Pradesh State Dental Council",
+        "Hyderabad Medical Council",
+        "Inspector Board of Indian Medicines, Department of AYUSH (Telangana)",
+        "J &K State Dental Council",
+        "Jammu & Kashmir Medical Council",
+        "Jharkhand Medical Council",
+        "Jharkhand State Chikitsa Parishad",
+        "Jharkhand State Dental Council",
+        "Karnataka Ayurvedic and Unani Practitioners Board",
+        "Karnataka Medical Council",
+        "Karnataka State Dental Council",
+        "Kerala State Dental Council",
+        "Madhya Pradesh Ayurvedic-Unani and Prakritic Chikitsa Board",
+        "Madhya Pradesh Medical Council",
+        "Madhya Pradesh State Dental Council",
+        "Madras Medical Council",
+        "Mahakoshal Medical Council",
+        "Maharashtra Council of Indian Medicine",
+        "Maharashtra Medical Council",
+        "Maharashtra State Dental Council",
+        "Manipur Medical Council",
+        "Manipur State Dental Council",
+        "MAKAUT",
+        "Medical Council of India",
+        "Medical Council of Tanganyika",
+        "Meghalaya State Dental Council",
+        "Mizoram Medical Council",
+        "Mizoram State Registration Tribunal",
+        "Mysore Medical Council",
+        "Nagaland Medical Council",
+        "Nagaland State Dental Council",
+        "Orissa Council of Medical Registration",
+        "Orissa State Council of Ayurvedic Medicine",
+        "Orissa State Dental Council",
+        "Others",
+        "Paschim Banga Ayurved Parishad",
+        "Pondicherry Medical Council",
+        "Punjab Medical Council",
+        "Punjab State Dental Council",
+        "Rajasthan Medical Council",
+        "Rajasthan State Dental Council",
+        "Rehabilitation Council of India",
+        "Sikkim Dental Registration Tribunal",
+        "Sikkim Medical Council",
+        "State Council of Ayurvedic and Unani Medicine (Patna)",
+        "State Council Of Unani Medicine (West Bengal)",
+        "State Dental Council, Puducherry",
+        "Tamil Nadu Board of Indian Medicine",
+        "Tamil Nadu Medical Council",
+        "Tamil Nadu State Dental Council",
+        "Telangana Dental Council",
+        "Telangana State Medical Council",
+        "The Karnataka State Dental Council",
+        "Travancore Cochin Medical Council, Trivandrum",
+        "Travancore-Cochin Medical Councils (Combined Council)",
+        "Tripura State Medical Council",
+        "Tripura State Dental Council",
+        "Uttar Pradesh Medical Council",
+        "Uttar Pradesh State Dental Council",
+        "Uttarakhand Medical Council",
+        "Vidharba Medical Council",
+        "West Bengal Medical Council",
+        "West Bengal State Dental Council",
+      ];
+
+      const COUNCILS2 = [
+        "Andaman and Nicobar Islands",
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Bihar",
+        "Chandigarh",
+        "Chhattisgarh",
+        "Dadar and Nagar Haveli",
+        "Daman and Diu",
+        "Delhi",
+        "Goa",
+        "Gujarat",
+        "Haryana",
+        "Himachal Pradesh",
+        "Jammu and Kashmir",
+        "Jharkhand",
+        "Karnataka",
+        "Kerala",
+        "Lakshadweep",
+        "Madhya Pradesh",
+        "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
+        "Puducherry",
+        "Punjab",
+        "Rajasthan",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttar Pradesh",
+        "Uttarakhand",
+        "West Bengal",
+      ];
+
+      const LANGUAGES = [
+        "Assamese",
+        "Bengali",
+        "English",
+        "Gujarati",
+        "Hindi",
+        "Kannada",
+        "Malayalam",
+        "Marathi",
+        "Nepali",
+        "Odia",
+        "Punjabi",
+        "Tamil",
+        "Telugu",
+        "Urdu",
+      ];
+
+      const EXCEL_LOCK_PASSWORD = "Easy@mani2025";
+
+      // ====== State ======
+      const doctors = []; // keys = excel keys
+      let editingIndex = null;
+      let mobileIndex = new Set(); // DR_MOBILE
+      let regnIndex = new Set(); // REGN_NO (uppercase)
+
+      // ====== DOM ======
+      const tableContainer = document.getElementById("tableContainer");
+      const tbody = document.querySelector("#doctorsTable tbody");
+      const exportBtn = document.getElementById("exportBtn");
+      const openAddBtn = document.getElementById("openAddBtn");
+
+      // Specialist dropdown DOM
+      const drSpecialistSearch = document.getElementById("drSpecialistSearch");
+      const specialistDropdown = document.getElementById("specialistDropdown");
+      const drSpecialist = document.getElementById("drSpecialist");
+
+      // Council dropdown DOM
+      const drCouncilSearch = document.getElementById("drCouncilSearch");
+      const councilDropdown = document.getElementById("councilDropdown");
+      const drCouncil = document.getElementById("drCouncil");
+
+      const doctorModal = new bootstrap.Modal(
+        document.getElementById("doctorModal"),
+        {
+          backdrop: "static", // Prevents closing when clicking outside
+          keyboard: false, // Prevents ESC key closing
+        },
+      );
+      // Fix ALL focus warnings (Pure JavaScript)
+      doctorModal._element.addEventListener("shown.bs.modal", function () {
+        drName.focus(); // Safe focus on first field
+      });
+
+      doctorModal._element.addEventListener("hide.bs.modal", function () {
+        // Pure JS - no TypeScript
+        if (document.activeElement) {
+          document.activeElement.blur();
+        }
+      });
+
+      const doctorForm = document.getElementById("doctorForm");
+      const doctorModalLabel = document.getElementById("doctorModalLabel");
+      const modalSubmitBtn = document.getElementById("modalSubmitBtn");
+
+      const drName = document.getElementById("drName");
+      const drMobile = document.getElementById("drMobile");
+      const drSex = document.getElementById("drSex");
+      const drRegnNo = document.getElementById("drRegnNo");
+      const drDesignation = document.getElementById("drDesignation");
+      const drQualification = document.getElementById("drQualification");
+      const drExperience = document.getElementById("drExperience");
+      const drReportingDay = document.getElementById("drReportingDay");
+      const drFees = document.getElementById("drFees");
+      const drClinicCharge = document.getElementById("drClinicCharge");
+      const drGoogleReviews = document.getElementById("drGoogleReviews");
+      const regnLabel = document.getElementById("regnLabel");
+
+      // Languages UI DOM
+      const langMulti = document.getElementById("langMulti");
+      const langBtnText = document.getElementById("langBtnText");
+      const langSearch = document.getElementById("langSearch");
+      const langList = document.getElementById("langList");
+      const langBadges = document.getElementById("langBadges");
+      const langError = document.getElementById("langError");
+
+      // ====== Helpers ======
+      function escapeHtml(str) {
+        return String(str)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "<")
+          .replaceAll(">", ">")
+          .replaceAll('"', '"')
+          .replaceAll("'", "&#039;");
+      }
+
+      function validateDoctorName() {
+        const v = drName.value.trim();
+        const upperCount = (v.match(/[A-Z]/g) || []).length;
+
+        const valid =
+          v.length >= 2 &&
+          v.length <= 50 &&
+          /^[A-Za-z.\s]+$/.test(v) &&
+          upperCount >= 2 &&
+          !/\s{2,}/.test(v) &&
+          !/\.{2,}/.test(v) &&
+          !/^[.\s]|[.\s]$/.test(v);
+
+        drName.setCustomValidity(valid ? "" : "invalid");
+        return valid;
+      }
+
+      function fillSelect(selectEl, options, placeholder = "Select") {
+        selectEl.innerHTML =
+          `<option value="" selected disabled>${placeholder}</option>` +
+          options
+            .map(
+              (o) =>
+                `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`,
+            )
+            .join("");
+      }
+
+      // ====== NEW: Dynamic council population ======
+      function updateCouncilDropdown(forceValue = "") {
+        const specialist = drSpecialist.value;
+        const isHomeopathy = specialist === "Homeopathic Doctor";
+
+        const councilOptions = isHomeopathy ? COUNCILS2 : COUNCILS;
+        const placeholder = isHomeopathy ? "Select State" : "Select Council";
+
+        fillSelect(drCouncil, councilOptions, placeholder);
+
+        if (forceValue && councilOptions.includes(forceValue)) {
+          drCouncil.value = forceValue;
+        } else {
+          drCouncil.value = "";
+        }
+        applyRegnRule();
+        validateDuplicateRegnNo();
+      }
+
+      // Initialize searchable dropdowns
+      renderSpecialistList("");
+      renderCouncilList("");
+
+      function setDefaults() {
+        drExperience.value = "";
+        drFees.value = "";
+        drReportingDay.value = "";
+        drClinicCharge.value = "";
+        drGoogleReviews.value = 0;
+      }
+
+      function updateUiVisibility() {
+        const hasRows = doctors.length > 0;
+        tableContainer.classList.toggle("d-none", !hasRows);
+        exportBtn.classList.toggle("d-none", !hasRows);
+
+        // Optional: Hide hint after first doctor
+        const hintContainer = document.getElementById("hintContainer");
+        hintContainer.classList.toggle("d-none", hasRows);
+      }
+
+      // ====== Conditional REGN rule ======
+      function applyRegnRule() {
+        const council = (drCouncil.value || "").trim();
+        const mustHave = council && council !== "Others";
+        drRegnNo.required = mustHave;
+        regnLabel.classList.toggle("req", mustHave);
+
+        drRegnNo.setCustomValidity("");
+        drRegnNo.classList.remove("is-invalid");
+      }
+
+      // ====== Validations ======
+      function validateMobile() {
+        const v = drMobile.value.trim();
+        const ok = /^[6-9]\d{9}$/.test(v);
+        drMobile.setCustomValidity(ok ? "" : "invalid");
+        return ok;
+      }
+
+      function validateIntegers() {
+        const intFields = [
+          drExperience,
+          drReportingDay,
+          drFees,
+          drClinicCharge,
+        ];
+        let ok = true;
+        for (const el of intFields) {
+          const raw = String(el.value ?? "").trim();
+          const n = raw === "" ? NaN : Number(raw);
+          const valid = !Number.isNaN(n) && n >= 0 && Number.isInteger(n);
+          el.setCustomValidity(valid ? "" : "invalid");
+          if (!valid) ok = false;
+        }
+        return ok;
+      }
+
+      function validateGoogleReviews() {
+        const raw = String(drGoogleReviews.value ?? "").trim();
+        if (raw === "") return true;
+        const n = Number(raw);
+        const valid = !Number.isNaN(n) && n >= 0 && n <= 5;
+        drGoogleReviews.setCustomValidity(valid ? "" : "invalid");
+        return valid;
+      }
+
+      function validateSpecialist() {
+        const value = drSpecialist.value.trim();
+        const searchValue = drSpecialistSearch.value.trim();
+        const isValid = value.length > 0 && value === searchValue;
+
+        // ✅ ALWAYS set custom validity - prevents HTML5 :valid green
+        drSpecialist.setCustomValidity(
+          !isValid ? "Please select from dropdown" : "",
+        );
+        drSpecialistSearch.setCustomValidity(
+          !isValid ? "Please select from dropdown" : "",
+        );
+
+        // Clear Bootstrap classes
+        drSpecialistSearch.classList.remove("is-invalid", "is-valid");
+        drSpecialist.classList.remove("is-invalid", "is-valid");
+
+        // ONLY show green after form submit AND valid
+        if (doctorForm.classList.contains("was-validated") && isValid) {
+          drSpecialistSearch.classList.add("is-valid");
+          drSpecialist.classList.add("is-valid");
+        } else if (doctorForm.classList.contains("was-validated")) {
+          drSpecialistSearch.classList.add("is-invalid");
+          drSpecialist.classList.add("is-invalid");
+        }
+        return isValid;
+      }
+
+      function validateCouncil() {
+        const value = drCouncil.value.trim();
+        const searchValue = drCouncilSearch.value.trim();
+        const isValid = value.length > 0 && value === searchValue;
+
+        // ✅ ALWAYS set custom validity - prevents HTML5 :valid green
+        drCouncil.setCustomValidity(
+          !isValid ? "Please select from dropdown" : "",
+        );
+        drCouncilSearch.setCustomValidity(
+          !isValid ? "Please select from dropdown" : "",
+        );
+
+        // Clear Bootstrap classes
+        drCouncilSearch.classList.remove("is-invalid", "is-valid");
+        drCouncil.classList.remove("is-invalid", "is-valid");
+
+        // ONLY show green after form submit AND valid
+        if (doctorForm.classList.contains("was-validated") && isValid) {
+          drCouncilSearch.classList.add("is-valid");
+          drCouncil.classList.add("is-valid");
+        } else if (doctorForm.classList.contains("was-validated")) {
+          drCouncilSearch.classList.add("is-invalid");
+          drCouncil.classList.add("is-invalid");
+        }
+        return isValid;
+      }
+
+      function validateDuplicateMobile() {
+        const mobile = drMobile.value.trim();
+        const currentOriginal =
+          editingIndex !== null
+            ? String(doctors[editingIndex]?.DR_MOBILE || "").trim()
+            : "";
+
+        drMobile.classList.remove("is-invalid");
+        if (!mobile) return true;
+
+        const exists = mobileIndex.has(mobile) && mobile !== currentOriginal;
+        if (exists) {
+          drMobile.setCustomValidity("duplicate");
+          drMobile.classList.add("is-invalid");
+          return false;
+        } else {
+          if (drMobile.validationMessage === "duplicate")
+            drMobile.setCustomValidity("");
+        }
+        return true;
+      }
+
+      function validateDuplicateRegnNo() {
+        const regn = drRegnNo.value.trim().toUpperCase();
+        const currentOriginal =
+          editingIndex !== null
+            ? String(doctors[editingIndex]?.REGN_NO || "")
+                .trim()
+                .toUpperCase()
+            : "";
+
+        drRegnNo.setCustomValidity("");
+        drRegnNo.classList.remove("is-invalid");
+
+        if (drRegnNo.required && !regn) {
+          drRegnNo.setCustomValidity("required");
+          drRegnNo.classList.add("is-invalid");
+          return false;
+        }
+
+        if (!regn) return true;
+
+        const exists = regnIndex.has(regn) && regn !== currentOriginal;
+        if (exists) {
+          drRegnNo.setCustomValidity("duplicate");
+          drRegnNo.classList.add("is-invalid");
+          return false;
+        }
+        return true;
+      }
+
+      // ====== Languages dropdown multi-select (with "first 2 + +N more") ======
+      let selectedLanguages = new Set();
+
+      function formatLangButtonText() {
+        const arr = Array.from(selectedLanguages);
+
+        if (arr.length === 0) return "Select languages";
+        if (arr.length === 1) return arr[0];
+        if (arr.length === 2) return `${arr[0]}, ${arr[1]}`;
+
+        // first 2 + remaining
+        return `${arr[0]}, ${arr[1]} +${arr.length - 2} more`;
+      }
+
+      function renderLanguageList(filterText = "") {
+        const q = filterText.trim().toLowerCase();
+        const items = LANGUAGES.filter((l) => l.toLowerCase().includes(q))
+          .map((l) => {
+            const checked = selectedLanguages.has(l);
+            return `
+          <div class="dd-item" data-lang="${escapeHtml(l)}">
+            <div class="d-flex align-items-center gap-2">
+              <input class="form-check-input m-0" type="checkbox" ${
+                checked ? "checked" : ""
+              } />
+              <div>${escapeHtml(l)}</div>
+            </div>
+            ${
+              checked
+                ? `<span class="badge text-bg-success">Selected</span>`
+                : ``
+            }
+          </div>
+        `;
+          })
+          .join("");
+
+        langList.innerHTML =
+          items || `<div class="text-muted p-2">No results</div>`;
+      }
+
+      function renderLanguageBadges() {
+        const arr = Array.from(selectedLanguages);
+
+        langBtnText.textContent = formatLangButtonText();
+
+        if (arr.length === 0) {
+          langBadges.innerHTML = "";
+          return;
+        }
+
+        langBadges.innerHTML = arr
+          .map(
+            (l) => `
+          <span class="lang-badge">
+            ${escapeHtml(l)}
+            <button type="button" data-remove="${escapeHtml(l)}">×</button>
+          </span>
+        `,
+          )
+          .join("");
+      }
+
+      function validateLanguagesDropdown() {
+        const ok = selectedLanguages.size > 0;
+        const showError = doctorForm.classList.contains("was-validated");
+        langMulti.classList.toggle("is-invalid", !ok && showError);
+        langError.style.display = !ok && showError ? "block" : "none";
+        return ok;
+      }
+
+      function clearLanguagesUI() {
+        selectedLanguages.clear();
+        langSearch.value = "";
+        renderLanguageList("");
+        renderLanguageBadges();
+        validateLanguagesDropdown();
+      }
+
+      function setLanguagesFromCSV(csv) {
+        selectedLanguages.clear();
+        String(csv || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+          .forEach((l) => selectedLanguages.add(l));
+
+        langSearch.value = "";
+        renderLanguageList("");
+        renderLanguageBadges();
+        validateLanguagesDropdown();
+      }
+
+      function getLanguagesCSV() {
+        return Array.from(selectedLanguages).join(", ");
+      }
+
+      // interactions
+      langList.addEventListener("click", (e) => {
+        const item = e.target.closest(".dd-item");
+        if (!item) return;
+        const lang = item.dataset.lang;
+
+        if (selectedLanguages.has(lang)) selectedLanguages.delete(lang);
+        else selectedLanguages.add(lang);
+
+        renderLanguageList(langSearch.value);
+        renderLanguageBadges();
+        validateLanguagesDropdown();
+      });
+
+      langBadges.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-remove]");
+        if (!btn) return;
+        const lang = btn.dataset.remove;
+        selectedLanguages.delete(lang);
+
+        renderLanguageList(langSearch.value);
+        renderLanguageBadges();
+        validateLanguagesDropdown();
+      });
+
+      langSearch.addEventListener("input", () =>
+        renderLanguageList(langSearch.value),
+      );
+
+      // init language ui
+      renderLanguageList("");
+      renderLanguageBadges();
+
+      // ====== Specialist dropdown single-select ======
+      function renderSpecialistList(filterText = "") {
+        const q = filterText.trim().toLowerCase();
+        const items = SPECIALISTS.filter((s) => s.toLowerCase().includes(q))
+          .map(
+            (s) =>
+              `<div class="dropdown-item" data-value="${escapeHtml(s)}">${escapeHtml(
+                s,
+              )}</div>`,
+          )
+          .join("");
+
+        specialistDropdown.innerHTML =
+          items || `<div class="dropdown-item disabled">No results</div>`;
+      }
+
+      function renderCouncilList(filterText = "") {
+        const specialist = drSpecialist.value;
+        const isHomeopathy = specialist === "Homeopathic Doctor";
+        const options = isHomeopathy ? COUNCILS2 : COUNCILS;
+
+        const q = filterText.trim().toLowerCase();
+        const items = options
+          .filter((c) => c.toLowerCase().includes(q))
+          .map(
+            (c) =>
+              `<div class="dropdown-item" data-value="${escapeHtml(c)}">${escapeHtml(
+                c,
+              )}</div>`,
+          )
+          .join("");
+
+        councilDropdown.innerHTML =
+          items || `<div class="dropdown-item disabled">No results</div>`;
+      }
+
+      specialistDropdown.addEventListener("click", (e) => {
+        const item = e.target.closest(".dropdown-item");
+        if (!item || item.classList.contains("disabled")) return;
+
+        const value = item.dataset.value;
+        drSpecialist.value = value;
+        drSpecialistSearch.value = value;
+        specialistDropdown.classList.remove("show");
+
+        // ✅ ONLY NOW validate (after actual selection)
+        validateSpecialist(); // Now shows green ✓
+        updateCouncilDropdown();
+      });
+
+      // Council interactions
+      drCouncilSearch.addEventListener("input", () => {
+        renderCouncilList(drCouncilSearch.value);
+        councilDropdown.classList.add("show");
+      });
+
+      drCouncilSearch.addEventListener("focus", () => {
+        renderCouncilList(drCouncilSearch.value);
+        councilDropdown.classList.add("show");
+      });
+
+      councilDropdown.addEventListener("click", (e) => {
+        const item = e.target.closest(".dropdown-item");
+        if (!item || item.classList.contains("disabled")) return;
+
+        const value = item.dataset.value;
+        drCouncil.value = value;
+        drCouncilSearch.value = value;
+        councilDropdown.classList.remove("show");
+        // ✅ ONLY NOW validate (after actual selection)
+        validateCouncil(); // Now shows green ✓
+        applyRegnRule();
+      });
+
+      // Close dropdowns when clicking outside
+      document.addEventListener("click", (e) => {
+        if (
+          !e.target.closest("#drSpecialistSearch") &&
+          !e.target.closest("#specialistDropdown")
+        ) {
+          specialistDropdown.classList.remove("show");
+        }
+        if (
+          !e.target.closest("#drCouncilSearch") &&
+          !e.target.closest("#councilDropdown")
+        ) {
+          councilDropdown.classList.remove("show");
+        }
+      });
+
+      // FIXED: Typing = NO validation colors
+      drSpecialistSearch.addEventListener("input", () => {
+        // Clear invalid state during typing ONLY (no green/red)
+        drSpecialistSearch.classList.remove("is-invalid", "is-valid");
+        drSpecialist.classList.remove("is-invalid", "is-valid");
+        renderSpecialistList(drSpecialistSearch.value);
+        specialistDropdown.classList.add("show");
+      });
+
+      drCouncilSearch.addEventListener("input", () => {
+        // Clear invalid state during typing ONLY (no green/red)
+        drCouncilSearch.classList.remove("is-invalid", "is-valid");
+        drCouncil.classList.remove("is-invalid", "is-valid");
+        renderCouncilList(drCouncilSearch.value);
+        councilDropdown.classList.add("show");
+      });
+
+      // Validation ONLY on actual selection
+      // drSpecialist.addEventListener("change", () => {
+      //   validateSpecialist();
+      //   updateCouncilDropdown();
+      // });
+
+      // drCouncil.addEventListener("change", () => {
+      //   validateCouncil();
+      //   applyRegnRule();
+      //   validateDuplicateRegnNo();
+      // });
+
+      // ====== Live validations ======
+      drSpecialist.addEventListener("change", () => {
+        updateCouncilDropdown();
+      });
+
+      drName.addEventListener("input", function (e) {
+        let value = e.target.value;
+        const cursorPos = e.target.selectionStart; // Save cursor position
+
+        // Fix double spaces → single space
+        const prevSpaces = (value.match(/\s+/g) || []).length;
+        value = value.replace(/\s{2,}/g, " ");
+
+        // Fix double periods → single period
+        const prevPeriods = (value.match(/\.{2,}/g) || []).length;
+        value = value.replace(/\.{2,}/g, ".");
+
+        // Restore cursor position
+        e.target.value = value;
+        e.target.setSelectionRange(cursorPos, cursorPos);
+      });
+
+      drName.addEventListener("beforeinput", (e) => {
+        if (!e.data) return;
+        const v = drName.value;
+        const pos = drName.selectionStart;
+
+        if (e.data === " " && v[pos - 1] === " ") e.preventDefault();
+        if (e.data === "." && v[pos - 1] === ".") e.preventDefault();
+      });
+
+      drMobile.addEventListener("input", () => {
+        validateMobile();
+        validateDuplicateMobile();
+      });
+
+      drCouncil.addEventListener("change", () => {
+        applyRegnRule();
+        validateDuplicateRegnNo();
+      });
+
+      drRegnNo.addEventListener("input", validateDuplicateRegnNo);
+
+      drExperience.addEventListener("input", validateIntegers);
+      drReportingDay.addEventListener("input", validateIntegers);
+      drFees.addEventListener("input", validateIntegers);
+      drClinicCharge.addEventListener("input", validateIntegers);
+      drGoogleReviews.addEventListener("input", validateGoogleReviews);
+
+      // validate lang when dropdown closes
+      langMulti.addEventListener("hidden.bs.dropdown", () =>
+        validateLanguagesDropdown(),
+      );
+
+      // ====== Render Table ======
+      function renderTable() {
+        tbody.innerHTML = doctors
+          .map(
+            (d, idx) => `
+          <tr data-idx="${idx}">
+            <td>${escapeHtml(d.DR_NAME)}</td>
+            <td>${escapeHtml(d.DR_MOBILE)}</td>
+            <td>${escapeHtml(d.SEX)}</td>
+            <td>${escapeHtml(d.SPECIALIST)}</td>
+            <td>${escapeHtml(d.REGN_NO)}</td>
+            <td>${escapeHtml(d["COUNCIL / STATE"])}</td>
+            <td>${escapeHtml(d.DESIGNATION)}</td>
+            <td>${escapeHtml(d.QUALIFICATION)}</td>
+            <td>${escapeHtml(d["EXPERIENCE (Year)"])}</td>
+            <td>${escapeHtml(d.LANGUAGE)}</td>
+            <td>${escapeHtml(d.REPORTING_DAY)}</td>
+            <td>${escapeHtml(d.DR_FEES)}</td>
+            <td>${escapeHtml(d.CLINIC_CHRG)}</td>
+            <td>${escapeHtml(d.GOOGLE_REVIEWS)}</td>
+            <td>
+              <button class="btn btn-warning btn-sm edit-btn" title="Edit"><i class="bi bi-pencil"></i></button>
+              <button class="btn btn-danger btn-sm remove-btn" title="Remove"><i class="bi bi-trash"></i></button>
+            </td>
+          </tr>
+        `,
+          )
+          .join("");
+        updateUiVisibility();
+      }
+
+      // ====== Modal open handlers ======
+      function resetForm() {
+        doctorForm.reset();
+        doctorForm.classList.remove("was-validated");
+        editingIndex = null;
+
+        setDefaults();
+        clearLanguagesUI();
+      }
+
+      function openAddModal() {
+        resetForm();
+        doctorModalLabel.textContent = "Add Doctor";
+        modalSubmitBtn.innerHTML = "<strong>Add Doctor</strong>";
+        modalSubmitBtn.className = "btn btn-primary";
+        doctorModal.hide(); // Ensure modal is closed before showing
+        doctorModal.show();
+      }
+
+      function openEditModal(index) {
+        const d = doctors[index];
+        editingIndex = index;
+
+        doctorForm.classList.remove("was-validated");
+
+        drName.value = d.DR_NAME;
+        drMobile.value = d.DR_MOBILE;
+        drSex.value = d.SEX;
+
+        // Set specialist
+        drSpecialist.value = d.SPECIALIST;
+        drSpecialistSearch.value = d.SPECIALIST;
+
+        // Set council
+        drCouncil.value = d["COUNCIL / STATE"];
+        drCouncilSearch.value = d["COUNCIL / STATE"];
+
+        applyRegnRule();
+
+        drRegnNo.value = d.REGN_NO;
+        drDesignation.value = d.DESIGNATION;
+        drQualification.value = d.QUALIFICATION;
+        drExperience.value = d["EXPERIENCE (Year)"];
+
+        setLanguagesFromCSV(d.LANGUAGE);
+
+        drReportingDay.value = d.REPORTING_DAY;
+        drFees.value = d.DR_FEES;
+        drClinicCharge.value = d.CLINIC_CHRG;
+        drGoogleReviews.value = d.GOOGLE_REVIEWS;
+
+        drMobile.classList.remove("is-invalid");
+        drRegnNo.classList.remove("is-invalid");
+
+        doctorModalLabel.textContent = "Edit Doctor";
+        modalSubmitBtn.innerHTML = "<strong>Update Doctor</strong>";
+        modalSubmitBtn.className = "btn btn-success";
+        doctorModal.show();
+      }
+
+      openAddBtn.addEventListener("click", openAddModal);
+
+      // ====== ENTER KEY: Tab-like navigation (SKIP if current field empty) ======
+      function handleEnterKey(e) {
+        if (e.key === "Enter") {
+          e.preventDefault(); // STOP form submission
+          e.stopPropagation();
+
+          // Skip buttons, dropdown search inputs, and badges
+          const skipElements = [
+            "button",
+            "select",
+            "[data-remove]",
+            "#langSearch",
+            "#drSpecialistSearch",
+            "#drCouncilSearch",
+          ];
+          if (skipElements.some((sel) => e.target.matches(sel))) return;
+
+          // **NEW: Don't move if current field is empty**
+          const currentValue = e.target.value && e.target.value.trim();
+          if (!currentValue) {
+            e.target.classList.add("is-invalid"); // Show empty field warning
+            return; // STAY on current field
+          }
+
+          // Find next focusable input in form
+          const formInputs = Array.from(
+            doctorForm.querySelectorAll(`
+        input:not([type="hidden"]):not([readonly]),
+        select:not([disabled])
+      `),
+          );
+
+          const currentIndex = formInputs.indexOf(e.target);
+
+          if (currentIndex !== -1 && currentIndex < formInputs.length - 1) {
+            const nextInput = formInputs[currentIndex + 1];
+            nextInput.focus();
+            nextInput.select(); // Select text for easy replace
+          }
+        }
+      }
+
+      // Apply to ALL form inputs
+      ["input", "select"].forEach((tag) => {
+        doctorForm.querySelectorAll(tag).forEach((el) => {
+          el.addEventListener("keydown", handleEnterKey);
+        });
+      });
+
+      // ====== Submit ======
+      doctorForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        doctorForm.classList.add("was-validated");
+
+        applyRegnRule();
+
+        const okMobile = validateMobile();
+        const okSpecialist = validateSpecialist();
+        const okCouncil = validateCouncil();
+        const okInts = validateIntegers();
+        const okGr = validateGoogleReviews();
+        const okDupMobile = okMobile ? validateDuplicateMobile() : false;
+        const okDupRegn = validateDuplicateRegnNo();
+        const okLang = validateLanguagesDropdown();
+        const okName = validateDoctorName();
+
+        if (!doctorForm.checkValidity()) {
+          const invalidFields = Array.from(doctorForm.elements).filter(
+            (el) => !el.checkValidity(),
+          );
+        }
+
+        if (
+          !doctorForm.checkValidity() ||
+          !okName ||
+          !okMobile ||
+          !okSpecialist ||
+          !okCouncil ||
+          !okInts ||
+          !okGr ||
+          !okDupMobile ||
+          !okDupRegn ||
+          !okLang
+        ) {
+          return;
+        }
+
+        const payload = {
+          DR_NAME: drName.value.trim(),
+          DR_MOBILE: drMobile.value.trim(),
+          SEX: (drSex.value || "").toUpperCase(),
+          SPECIALIST: drSpecialist.value,
+          REGN_NO: drRegnNo.value.trim(),
+          "COUNCIL / STATE": drCouncil.value,
+          DESIGNATION: drDesignation.value.trim(),
+          QUALIFICATION: drQualification.value.trim(),
+          "EXPERIENCE (Year)": String(parseInt(drExperience.value, 10)),
+          LANGUAGE: getLanguagesCSV(), // comma separated
+          REPORTING_DAY: String(parseInt(drReportingDay.value, 10)),
+          DR_FEES: String(parseInt(drFees.value, 10)),
+          CLINIC_CHRG: String(parseInt(drClinicCharge.value, 10)),
+          GOOGLE_REVIEWS:
+            String(drGoogleReviews.value ?? "").trim() === ""
+              ? "0"
+              : String(Number(drGoogleReviews.value)),
+        };
+
+        if (editingIndex === null) {
+          doctors.push(payload);
+          mobileIndex.add(payload.DR_MOBILE);
+          const regnUpper = String(payload.REGN_NO || "")
+            .trim()
+            .toUpperCase();
+          if (regnUpper) regnIndex.add(regnUpper);
+        } else {
+          const old = doctors[editingIndex];
+
+          const oldMobile = String(old.DR_MOBILE || "").trim();
+          const oldRegn = String(old.REGN_NO || "")
+            .trim()
+            .toUpperCase();
+
+          const newMobile = String(payload.DR_MOBILE || "").trim();
+          const newRegn = String(payload.REGN_NO || "")
+            .trim()
+            .toUpperCase();
+
+          if (oldMobile && oldMobile !== newMobile)
+            mobileIndex.delete(oldMobile);
+          if (newMobile) mobileIndex.add(newMobile);
+
+          if (oldRegn && oldRegn !== newRegn) regnIndex.delete(oldRegn);
+          if (newRegn) regnIndex.add(newRegn);
+
+          doctors[editingIndex] = payload;
+        }
+
+        doctorModal.hide();
+        renderTable();
+        updateUiVisibility();
+        resetForm(); // clear form after submit
+      });
+
+      // ====== Table actions ======
+      tbody.addEventListener("click", (e) => {
+        const row = e.target.closest("tr");
+        if (!row) return;
+        const idx = Number(row.dataset.idx);
+
+        if (e.target.closest(".edit-btn")) openEditModal(idx);
+
+        if (e.target.closest(".remove-btn")) {
+          const d = doctors[idx];
+
+          const m = String(d.DR_MOBILE || "").trim();
+          const r = String(d.REGN_NO || "")
+            .trim()
+            .toUpperCase();
+
+          if (m) mobileIndex.delete(m);
+          if (r) regnIndex.delete(r);
+
+          doctors.splice(idx, 1);
+          renderTable();
+        }
+      });
+
+      // ====== Export ======
+      exportBtn.addEventListener("click", exportTableToExcel);
+
+      async function exportTableToExcel() {
+        if (!doctors.length) return;
+
+        const wb = new ExcelJS.Workbook();
+        wb.created = new Date();
+        const ws = wb.addWorksheet("Dr Profile");
+
+        // Excel headers = previous names (as requested)
+        const headers = [
+          "DR_NAME",
+          "DR_MOBILE",
+          "SEX",
+          "SPECIALIST",
+          "REGN_NO",
+          "COUNCIL / STATE",
+          "DESIGNATION",
+          "QUALIFICATION",
+          "EXPERIENCE (Year)",
+          "LANGUAGE",
+          "REPORTING_DAY",
+          "DR_FEES",
+          "CLINIC_CHRG",
+          "GOOGLE_REVIEWS",
+        ];
+
+        ws.addRow(headers);
+        const headerRow = ws.getRow(1);
+        headerRow.font = { bold: true };
+        headerRow.alignment = { vertical: "middle", horizontal: "center" };
+
+        doctors.forEach((d) => ws.addRow(headers.map((h) => d[h] ?? "")));
+
+        ws.columns.forEach((col) => {
+          let max = 10;
+          col.eachCell({ includeEmpty: true }, (c) => {
+            const len = String(c.value ?? "").length + 2;
+            if (len > max) max = len;
+          });
+          col.width = Math.min(max, 40);
+        });
+
+        ws.eachRow((r) =>
+          r.eachCell((c) => {
+            c.protection = { locked: true };
+          }),
+        );
+
+        await ws.protect(EXCEL_LOCK_PASSWORD, {
+          selectLockedCells: true,
+          selectUnlockedCells: true,
+          formatCells: false,
+          formatColumns: false,
+          formatRows: false,
+          insertRows: false,
+          insertColumns: false,
+          insertHyperlinks: false,
+          deleteRows: false,
+          deleteColumns: false,
+          sort: false,
+          autoFilter: false,
+          pivotTables: false,
+        });
+
+        const buf = await wb.xlsx.writeBuffer();
+        const blob = new Blob([buf], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "doctor_profile_readonly.xlsx";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(a.href);
+      }
+
+      // init
+      setDefaults();
+      applyRegnRule();
+      validateLanguagesDropdown();
+
+      // Initialize council dropdown on load
+      updateCouncilDropdown();
+
+      // Add to existing input handlers
+      drSpecialistSearch.addEventListener("input", () => {
+        // Force neutral state
+        drSpecialistSearch.setCustomValidity("Type to search");
+        drSpecialistSearch.classList.remove("is-valid", "is-invalid");
+        drSpecialist.classList.remove("is-valid", "is-invalid");
+        renderSpecialistList(drSpecialistSearch.value);
+        specialistDropdown.classList.add("show");
+      });
+
+      drCouncilSearch.addEventListener("input", () => {
+        // Force neutral state
+        drCouncilSearch.setCustomValidity("Type to search");
+        drCouncilSearch.classList.remove("is-valid", "is-invalid");
+        drCouncil.classList.remove("is-valid", "is-invalid");
+        renderCouncilList(drCouncilSearch.value);
+        councilDropdown.classList.add("show");
+      });
+
+      langSearch.addEventListener("input", () => {
+        // Force neutral state
+        langSearch.setCustomValidity("Type to search");
+        langSearch.classList.remove("is-valid", "is-invalid");
+        renderLanguageList(langSearch.value);
+      });
+    </script>
+  </body>
+</html>
