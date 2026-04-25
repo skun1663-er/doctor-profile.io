@@ -17,7 +17,7 @@
       rel="stylesheet" />
 
     <!-- <link rel="stylesheet" href="styles.css" /> -->
-    <style>
+<style>
       html,
       body {
         height: 100%;
@@ -49,8 +49,13 @@
         gap: 0.2rem;
         background-color: #a9e2f7;
         padding-inline: 0.1rem;
-        padding-top: 0.5rem;
+        padding-top: 2px;
         /* padding-bottom: 0.5rem; */
+      }
+
+      .row > * {
+        padding-left: 0px;
+        padding-right: 2px;
       }
 
       #landpageheading {
@@ -109,6 +114,10 @@
       }
 
       /* ---------- Languages dropdown (multi-select) ---------- */
+      .multi-dd {
+        width: 80%;
+      }
+
       .multi-dd .dropdown-toggle {
         width: 100%;
         text-align: left;
@@ -273,10 +282,12 @@ select,
       }
 
       img {
-        max-width: 200px;
-        width: 15vw;
+        max-width: 100px;
+        width: 5vw;
         height: auto;
-        min-width: 120px;
+        min-width: 50px;
+        padding-left: 2px;
+        padding-bottom: 2px;
       }
 
       footer {
@@ -525,6 +536,8 @@ select,
               <th>Reporting Days</th>
               <th>Doctor Fees</th>
               <th>Clinic Charge</th>
+              <th>Payment Type</th>
+              <th>Payment Time</th>
               <th>Google Reviews</th>
               <th style="width: 110px">Action</th>
             </tr>
@@ -801,6 +814,39 @@ select,
                           </div>
                         </div>
 
+                        <div class="col-6 col-md-3">
+                          <label class="form-label req" for="payType"
+                            >Payment Type</label
+                          >
+                          <select id="payType" class="form-select" required>
+                            <option value="" disabled>Select type</option>
+                            <option value="online">online</option>
+                            <option value="offline">offline</option>
+                            <option value="both" selected>both</option>
+                          </select>
+                          <div class="invalid-feedback">
+                            Please select a payment type.
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-6">
+                          <label class="form-label req" for="payTime"
+                            >Payment Time</label
+                          >
+                          <select id="payTime" class="form-select" required>
+                            <option value="" disabled>Select timing</option>
+                            <option value="Before_SL" selected>
+                              Before_SL (giving serial no.)
+                            </option>
+                            <option value="Before_IN">
+                              Before_IN (patient-in)
+                            </option>
+                          </select>
+                          <div class="invalid-feedback">
+                            Please select a payment time.
+                          </div>
+                        </div>
+
                         <div class="col-12 col-md-6">
                           <label class="form-label" for="drGoogleReviews"
                             >Google Reviews</label
@@ -844,6 +890,8 @@ select,
           </div>
         </div>
       </div>
+
+      <!-- footer -->
       <footer>
         &copy;2026.
         <span>
