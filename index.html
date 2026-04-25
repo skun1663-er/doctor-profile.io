@@ -857,56 +857,56 @@ select,
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
     <!-- <script src="script.js"></script> -->
-    <script>
+<script>
       // ====== Dropdown data ======
       const SPECIALISTS = [
-        "Allergologist/Allergist",
-        "Anesthesiologist",
-        "Ayurvedic Doctor",
-        "Cardiac Surgeon",
         "Cardiologist",
-        "Consultant Physician",
-        "Critical Care Specialist",
-        "Dentist",
-        "Dermatologist",
-        "Diabetologist",
-        "Dietitian",
-        "Endocrinologist",
-        "Gastroenterologist",
-        "General Physician",
-        "General Surgeon",
-        "Geriatrician",
-        "Gynecologist",
+        "Pediatric Cardiologist",
         "Hematologist",
-        "Hepatologist",
-        "Homeopathic Doctor",
-        "Laparoscopy Surgeon",
-        "Neonatologist",
+        "Dermatologist",
+        "Otolaryngologist",
+        "Allergologist\/Allergist",
+        "Dentist",
         "Nephrologist",
         "Neurologist",
-        "Neuropsychiatrist",
         "Oncologist",
-        "Ophthalmologist",
-        "Optometrist",
         "Orthopedist",
-        "Otolaryngologist",
-        "Pediatric Cardiologist",
-        "Pediatric Neurosurgeon",
-        "Pediatric Urologist",
+        "General Practitioner",
         "Pediatrician",
-        "Physiatrist",
-        "Physiotherapist",
-        "Plastic Surgeon",
-        "Proctologist",
         "Psychiatrist",
-        "Psychologist",
+        "Diabetologist",
+        "Sexologist",
+        "Urologist",
+        "Gynecologist",
         "Pulmonologist",
         "Radiologist",
+        "Hepatologist",
+        "Endocrinologist",
+        "Gastroenterologist",
+        "Physiotherapist",
+        "Geriatrician",
+        "Ophthalmologist",
         "Rheumatologist",
-        "Sexologist",
-        "Speech Therapist",
+        "General Surgeon",
+        "Proctologist",
+        "Plastic Surgeon",
+        "Dietitian",
+        "Physiatrist",
         "Transplant Surgeon",
-        "Urologist",
+        "Laparoscopy Surgeon",
+        "Cardiac Surgeon",
+        "Neonatologist",
+        "Pediatric Urologist",
+        "Pediatric Neurosurgeon",
+        "Anesthesiologist",
+        "Speech Therapist",
+        "Homeopathic Doctor",
+        "Critical Care Specialist",
+        "Neuropsychiatrist",
+        "Optometrist",
+        "Psychologist",
+        "Ayurvedic Doctor",
+        "Consultant Physician",
       ];
 
       // includes "Others" (conditional REGN_NO rule)
@@ -1069,7 +1069,7 @@ select,
         "Urdu",
       ];
 
-      const EXCEL_LOCK_PASSWORD = "skun1663-er"; // Change this to your desired password
+      const EXCEL_LOCK_PASSWORD = "easyhealths"; // Change this to your desired password
 
       // ====== State ======
       const doctors = []; // keys = excel keys
@@ -1126,6 +1126,8 @@ select,
       const drReportingDay = document.getElementById("drReportingDay");
       const drFees = document.getElementById("drFees");
       const drClinicCharge = document.getElementById("drClinicCharge");
+      const payType = document.getElementById("payType");
+      const payTime = document.getElementById("payTime");
       const drGoogleReviews = document.getElementById("drGoogleReviews");
       const regnLabel = document.getElementById("regnLabel");
 
@@ -1389,20 +1391,20 @@ select,
           .map((l) => {
             const checked = selectedLanguages.has(l);
             return `
-          <div class="dd-item" data-lang="${escapeHtml(l)}">
-            <div class="d-flex align-items-center gap-2">
-              <input class="form-check-input m-0" type="checkbox" ${
-                checked ? "checked" : ""
-              } />
-              <div>${escapeHtml(l)}</div>
-            </div>
-            ${
-              checked
-                ? `<span class="badge text-bg-success">Selected</span>`
-                : ``
-            }
-          </div>
-        `;
+                <div class="dd-item" data-lang="${escapeHtml(l)}">
+                  <div class="d-flex align-items-center gap-2">
+                    <input class="form-check-input m-0" type="checkbox" ${
+                      checked ? "checked" : ""
+                    } />
+                    <div>${escapeHtml(l)}</div>
+                  </div>
+                  ${
+                    checked
+                      ? `<span class="badge text-bg-success">Selected</span>`
+                      : ``
+                  }
+                </div>
+              `;
           })
           .join("");
 
@@ -1423,11 +1425,11 @@ select,
         langBadges.innerHTML = arr
           .map(
             (l) => `
-          <span class="lang-badge">
-            ${escapeHtml(l)}
-            <button type="button" data-remove="${escapeHtml(l)}">×</button>
-          </span>
-        `,
+                <span class="lang-badge">
+                  ${escapeHtml(l)}
+                  <button type="button" data-remove="${escapeHtml(l)}">×</button>
+                </span>
+              `,
           )
           .join("");
       }
@@ -1677,27 +1679,29 @@ select,
         tbody.innerHTML = doctors
           .map(
             (d, idx) => `
-          <tr data-idx="${idx}">
-            <td>${escapeHtml(d.DR_NAME)}</td>
-            <td>${escapeHtml(d.DR_MOBILE)}</td>
-            <td>${escapeHtml(d.SEX)}</td>
-            <td>${escapeHtml(d.SPECIALIST)}</td>
-            <td>${escapeHtml(d.REGN_NO)}</td>
-            <td>${escapeHtml(d["COUNCIL / STATE"])}</td>
-            <td>${escapeHtml(d.DESIGNATION)}</td>
-            <td>${escapeHtml(d.QUALIFICATION)}</td>
-            <td>${escapeHtml(d["EXPERIENCE (Year)"])}</td>
-            <td>${escapeHtml(d.LANGUAGE)}</td>
-            <td>${escapeHtml(d.REPORTING_DAY)}</td>
-            <td>${escapeHtml(d.DR_FEES)}</td>
-            <td>${escapeHtml(d.CLINIC_CHRG)}</td>
-            <td>${escapeHtml(d.GOOGLE_REVIEWS)}</td>
-            <td>
-              <button class="btn btn-warning btn-sm edit-btn" title="Edit"><i class="bi bi-pencil"></i></button>
-              <button class="btn btn-danger btn-sm remove-btn" title="Remove"><i class="bi bi-trash"></i></button>
-            </td>
-          </tr>
-        `,
+                <tr data-idx="${idx}">
+                  <td>${escapeHtml(d.DR_NAME)}</td>
+                  <td>${escapeHtml(d.DR_MOBILE)}</td>
+                  <td>${escapeHtml(d.SEX)}</td>
+                  <td>${escapeHtml(d.SPECIALIST)}</td>
+                  <td>${escapeHtml(d.REGN_NO)}</td>
+                  <td>${escapeHtml(d["COUNCIL / STATE"])}</td>
+                  <td>${escapeHtml(d.DESIGNATION)}</td>
+                  <td>${escapeHtml(d.QUALIFICATION)}</td>
+                  <td>${escapeHtml(d["EXPERIENCE (Year)"])}</td>
+                  <td>${escapeHtml(d.LANGUAGE)}</td>
+                  <td>${escapeHtml(d.REPORTING_DAY)}</td>
+                  <td>${escapeHtml(d.DR_FEES)}</td>
+                  <td>${escapeHtml(d.CLINIC_CHRG)}</td>
+                  <td>${escapeHtml(d.GOOGLE_REVIEWS)}</td>
+                  <td>${escapeHtml(d.PAY_TYPE)}</td>
+                  <td>${escapeHtml(d.PAY_TIME)}</td>
+                  <td>
+                    <button class="btn btn-warning btn-sm edit-btn" title="Edit"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-danger btn-sm remove-btn" title="Remove"><i class="bi bi-trash"></i></button>
+                  </td>
+                </tr>
+              `,
           )
           .join("");
         updateUiVisibility();
@@ -1753,6 +1757,8 @@ select,
         drFees.value = d.DR_FEES;
         drClinicCharge.value = d.CLINIC_CHRG;
         drGoogleReviews.value = d.GOOGLE_REVIEWS;
+        payType.value = d.PAY_TYPE;
+        payTime.value = d.PAY_TIME;
 
         drMobile.classList.remove("is-invalid");
         drRegnNo.classList.remove("is-invalid");
@@ -1792,9 +1798,9 @@ select,
           // Find next focusable input in form
           const formInputs = Array.from(
             doctorForm.querySelectorAll(`
-        input:not([type="hidden"]):not([readonly]),
-        select:not([disabled])
-      `),
+              input:not([type="hidden"]):not([readonly]),
+              select:not([disabled])
+            `),
           );
 
           const currentIndex = formInputs.indexOf(e.target);
@@ -1870,6 +1876,8 @@ select,
             String(drGoogleReviews.value ?? "").trim() === ""
               ? "0"
               : String(Number(drGoogleReviews.value)),
+          PAY_TYPE: payType.value.toLowerCase(),
+          PAY_TIME: payTime.value,
         };
 
         if (editingIndex === null) {
@@ -1958,6 +1966,8 @@ select,
           "DR_FEES",
           "CLINIC_CHRG",
           "GOOGLE_REVIEWS",
+          "PAY_TYPE",
+          "PAY_TIME",
         ];
 
         ws.addRow(headers);
