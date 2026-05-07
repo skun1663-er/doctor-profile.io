@@ -1117,7 +1117,7 @@ select,
         "Urdu",
       ];
 
-      const EXCEL_LOCK_PASSWORD = "easyhealths"; // Change this to your desired password
+      const EXCEL_LOCK_PASSWORD = "1663"; // Change this to your desired password
 
       // ====== State ======
       const doctors = []; // keys = excel keys
@@ -1160,6 +1160,8 @@ select,
         }
       });
 
+      // const drMobile = document.getElementById("drMobile");
+
       const doctorForm = document.getElementById("doctorForm");
       const doctorModalLabel = document.getElementById("doctorModalLabel");
       const modalSubmitBtn = document.getElementById("modalSubmitBtn");
@@ -1187,6 +1189,9 @@ select,
       const langBadges = document.getElementById("langBadges");
       const langError = document.getElementById("langError");
 
+      drMobile.addEventListener("input", applyMobileOrRegnRule);
+      drCouncil.addEventListener("change", applyMobileOrRegnRule);
+      drRegnNo.addEventListener("input", applyMobileOrRegnRule);
       // ====== Helpers ======
       function escapeHtml(str) {
         return String(str)
@@ -1223,6 +1228,89 @@ select,
                 `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`,
             )
             .join("");
+      }
+
+      function applyMobileOrRegnRule() {
+        const mobile = drMobile.value.trim();
+        const regn = drRegnNo.value.trim();
+        const council = drCouncil.value.trim();
+        const councilIsOthers = council === "Others";
+
+        const hasMobile = /^[6-9]\d{9}$/.test(mobile);
+        const hasRegn = regn !== "";
+
+        // Reset
+        drMobile.setCustomValidity("");
+        drRegnNo.setCustomValidity("");
+        drCouncil.setCustomValidity("");
+
+        drCouncil.classList.remove("is-invalid");
+        drCouncilSearch.classList.remove("is-invalid");
+
+        // =========================================
+        // CASE 1:
+        // NO REGN + NO MOBILE
+        // =========================================
+        if (!hasRegn && !hasMobile) {
+          drCouncil.value = "";
+          drCouncilSearch.value = "";
+
+          drCouncilSearch.disabled = true;
+
+          drMobile.setCustomValidity(
+            "Mobile number or registration number required",
+          );
+
+          drRegnNo.setCustomValidity(
+            "Registration number or mobile number required",
+          );
+
+          renderCouncilList("");
+
+          return;
+        }
+
+        // Enable council
+        drCouncilSearch.disabled = false;
+
+        // =========================================
+        // CASE 2:
+        // REGISTRATION EXISTS
+        // Council CANNOT be Others
+        // =========================================
+
+        if (hasRegn) {
+          drCouncil.required = true;
+
+          drCouncilSearch.disabled = false;
+
+          // Remove Others from dropdown
+          renderCouncilList(drCouncilSearch.value);
+
+          // Safety cleanup
+          if (drCouncil.value === "Others") {
+            drCouncil.value = "";
+            drCouncilSearch.value = "";
+          }
+
+          return;
+        }
+
+        // =========================================
+        // CASE 3:
+        // NO REGN + MOBILE EXISTS
+        // ONLY Others allowed
+        // =========================================
+        if (!hasRegn && hasMobile) {
+          drCouncil.required = true;
+
+          drCouncil.value = "Others";
+          drCouncilSearch.value = "Others";
+
+          drCouncilSearch.disabled = true;
+
+          return;
+        }
       }
 
       // ====== NEW: Dynamic council population ======
@@ -1266,22 +1354,28 @@ select,
         hintContainer.classList.toggle("d-none", hasRows);
       }
 
-      // ====== Conditional REGN rule ======
-      function applyRegnRule() {
-        const council = (drCouncil.value || "").trim();
-        const mustHave = council && council !== "Others";
-        drRegnNo.required = mustHave;
-        regnLabel.classList.toggle("req", mustHave);
-
-        drRegnNo.setCustomValidity("");
-        drRegnNo.classList.remove("is-invalid");
-      }
-
       // ====== Validations ======
       function validateMobile() {
         const v = drMobile.value.trim();
+
+        // ✅ Empty mobile is allowed
+        if (v === "") {
+          drMobile.setCustomValidity("");
+          drMobile.classList.remove("is-invalid");
+          return true;
+        }
+
+        // ✅ Validate only if entered
         const ok = /^[6-9]\d{9}$/.test(v);
+
         drMobile.setCustomValidity(ok ? "" : "invalid");
+
+        if (ok) {
+          drMobile.classList.remove("is-invalid");
+        } else {
+          drMobile.classList.add("is-invalid");
+        }
+
         return ok;
       }
 
@@ -1341,6 +1435,11 @@ select,
       }
 
       function validateCouncil() {
+        if (drCouncilSearch.disabled) {
+          drCouncil.setCustomValidity("");
+          drCouncilSearch.setCustomValidity("");
+          return true;
+        }
         const value = drCouncil.value.trim();
         const searchValue = drCouncilSearch.value.trim();
         const isValid = value.length > 0 && value === searchValue;
@@ -1568,16 +1667,29 @@ select,
       function renderCouncilList(filterText = "") {
         const specialist = drSpecialist.value;
         const isHomeopathy = specialist === "Homeopathic Doctor";
-        const options = isHomeopathy ? COUNCILS2 : COUNCILS;
+
+        let options = isHomeopathy ? COUNCILS2 : COUNCILS;
+
+        const hasRegn = drRegnNo.value.trim() !== "";
+
+        // =========================================
+        // STRICT RULE:
+        // If registration exists,
+        // remove "Others" completely
+        // =========================================
+        if (hasRegn) {
+          options = options.filter((c) => c !== "Others");
+        }
 
         const q = filterText.trim().toLowerCase();
+
         const items = options
           .filter((c) => c.toLowerCase().includes(q))
           .map(
             (c) =>
-              `<div class="dropdown-item" data-value="${escapeHtml(c)}">${escapeHtml(
-                c,
-              )}</div>`,
+              `<div class="dropdown-item" data-value="${escapeHtml(c)}">
+          ${escapeHtml(c)}
+        </div>`,
           )
           .join("");
 
@@ -1620,7 +1732,7 @@ select,
         councilDropdown.classList.remove("show");
         // ✅ ONLY NOW validate (after actual selection)
         validateCouncil(); // Now shows green ✓
-        applyRegnRule();
+        // applyRegnRule();
       });
 
       // Close dropdowns when clicking outside
@@ -1655,18 +1767,6 @@ select,
         renderCouncilList(drCouncilSearch.value);
         councilDropdown.classList.add("show");
       });
-
-      // Validation ONLY on actual selection
-      // drSpecialist.addEventListener("change", () => {
-      //   validateSpecialist();
-      //   updateCouncilDropdown();
-      // });
-
-      // drCouncil.addEventListener("change", () => {
-      //   validateCouncil();
-      //   applyRegnRule();
-      //   validateDuplicateRegnNo();
-      // });
 
       // ====== Live validations ======
       drSpecialist.addEventListener("change", () => {
@@ -1705,7 +1805,7 @@ select,
       });
 
       drCouncil.addEventListener("change", () => {
-        applyRegnRule();
+        // applyRegnRule();
         validateDuplicateRegnNo();
       });
 
@@ -1724,34 +1824,44 @@ select,
 
       // ====== Render Table ======
       function renderTable() {
-        tbody.innerHTML = doctors
-          .map(
-            (d, idx) => `
-                <tr data-idx="${idx}">
-                  <td>${escapeHtml(d.DR_NAME)}</td>
-                  <td>${escapeHtml(d.DR_MOBILE)}</td>
-                  <td>${escapeHtml(d.SEX)}</td>
-                  <td>${escapeHtml(d.SPECIALIST)}</td>
-                  <td>${escapeHtml(d.REGN_NO)}</td>
-                  <td>${escapeHtml(d["COUNCIL / STATE"])}</td>
-                  <td>${escapeHtml(d.DESIGNATION)}</td>
-                  <td>${escapeHtml(d.QUALIFICATION)}</td>
-                  <td>${escapeHtml(d["EXPERIENCE (Year)"])}</td>
-                  <td>${escapeHtml(d.LANGUAGE)}</td>
-                  <td>${escapeHtml(d.REPORTING_DAY)}</td>
-                  <td>${escapeHtml(d.DR_FEES)}</td>
-                  <td>${escapeHtml(d.CLINIC_CHRG)}</td>
-                  <td>${escapeHtml(d.GOOGLE_REVIEWS)}</td>
-                  <td>${escapeHtml(d.PAY_TYPE)}</td>
-                  <td>${escapeHtml(d.PAY_TIME)}</td>
-                  <td>
-                    <button class="btn btn-warning btn-sm edit-btn" title="Edit"><i class="bi bi-pencil"></i></button>
-                    <button class="btn btn-danger btn-sm remove-btn" title="Remove"><i class="bi bi-trash"></i></button>
-                  </td>
-                </tr>
-              `,
-          )
+        tbody.innerHTML = [...doctors]
+          .reverse()
+          .map((d) => {
+            // Get original index from actual array
+            const originalIndex = doctors.indexOf(d);
+
+            return `
+        <tr data-idx="${originalIndex}">
+          <td>${escapeHtml(d.DR_NAME)}</td>
+          <td>${escapeHtml(d.DR_MOBILE)}</td>
+          <td>${escapeHtml(d.SEX)}</td>
+          <td>${escapeHtml(d.SPECIALIST)}</td>
+          <td>${escapeHtml(d.REGN_NO)}</td>
+          <td>${escapeHtml(d["COUNCIL / STATE"])}</td>
+          <td>${escapeHtml(d.DESIGNATION)}</td>
+          <td>${escapeHtml(d.QUALIFICATION)}</td>
+          <td>${escapeHtml(d["EXPERIENCE (Year)"])}</td>
+          <td>${escapeHtml(d.LANGUAGE)}</td>
+          <td>${escapeHtml(d.REPORTING_DAY)}</td>
+          <td>${escapeHtml(d.DR_FEES)}</td>
+          <td>${escapeHtml(d.CLINIC_CHRG)}</td>
+          <td>${escapeHtml(d.PAY_TYPE)}</td>
+          <td>${escapeHtml(d.PAY_TIME)}</td>
+          <td>${escapeHtml(d.GOOGLE_REVIEWS)}</td>
+          <td>
+            <button class="btn btn-warning btn-sm edit-btn" title="Edit">
+              <i class="bi bi-pencil"></i>
+            </button>
+
+            <button class="btn btn-danger btn-sm remove-btn" title="Remove">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+          })
           .join("");
+
         updateUiVisibility();
       }
 
@@ -1792,7 +1902,7 @@ select,
         drCouncil.value = d["COUNCIL / STATE"];
         drCouncilSearch.value = d["COUNCIL / STATE"];
 
-        applyRegnRule();
+        // applyRegnRule();
 
         drRegnNo.value = d.REGN_NO;
         drDesignation.value = d.DESIGNATION;
@@ -1873,30 +1983,68 @@ select,
         e.preventDefault();
         doctorForm.classList.add("was-validated");
 
-        applyRegnRule();
+        // applyRegnRule();
 
-        const okMobile = validateMobile();
-        const okSpecialist = validateSpecialist();
+        // ===== Current values =====
+        const mobile = drMobile.value.trim();
+        const regn = drRegnNo.value.trim();
+
+        const hasMobile = /^[6-9]\d{9}$/.test(drMobile.value.trim());
+        const hasRegn = drRegnNo.value.trim() !== "";
+        const council = drCouncil.value.trim();
+
+        // REGN EXISTS -> Others NOT allowed
+        if (hasRegn && council === "Others") {
+          drCouncil.classList.add("is-invalid");
+          drCouncilSearch.classList.add("is-invalid");
+
+          drCouncil.setCustomValidity(
+            'Council cannot be "Others" when registration exists',
+          );
+
+          return;
+        }
+
+        // NO REGN + MOBILE EXISTS -> ONLY Others allowed
+        if (!hasRegn && hasMobile && council !== "Others") {
+          drCouncil.classList.add("is-invalid");
+          drCouncilSearch.classList.add("is-invalid");
+
+          drCouncil.setCustomValidity(
+            'Council must be "Others" when registration does not exist',
+          );
+
+          return;
+        }
+
+        // NO REGN + NO MOBILE -> reject
+        if (!hasRegn && !hasMobile) {
+          drMobile.classList.add("is-invalid");
+          drRegnNo.classList.add("is-invalid");
+
+          return;
+        }
+
+        // =====================================================
+        // Extra validations
+        // =====================================================
+        const okMobile = mobile ? validateMobile() : true;
         const okCouncil = validateCouncil();
+        const okSpecialist = validateSpecialist();
         const okInts = validateIntegers();
         const okGr = validateGoogleReviews();
-        const okDupMobile = okMobile ? validateDuplicateMobile() : false;
+        const okDupMobile = mobile ? validateDuplicateMobile() : true;
         const okDupRegn = validateDuplicateRegnNo();
         const okLang = validateLanguagesDropdown();
         const okName = validateDoctorName();
 
-        if (!doctorForm.checkValidity()) {
-          const invalidFields = Array.from(doctorForm.elements).filter(
-            (el) => !el.checkValidity(),
-          );
-        }
-
+        // ===== Final submit check =====
         if (
           !doctorForm.checkValidity() ||
           !okName ||
           !okMobile ||
-          !okSpecialist ||
           !okCouncil ||
+          !okSpecialist ||
           !okInts ||
           !okGr ||
           !okDupMobile ||
@@ -2072,7 +2220,7 @@ select,
 
       // init
       setDefaults();
-      applyRegnRule();
+      // applyRegnRule();
       validateLanguagesDropdown();
 
       // Initialize council dropdown on load
