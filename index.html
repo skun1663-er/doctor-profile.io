@@ -1,0 +1,2828 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Doctor Profile Entry + Export (Protected)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="assets/cutedoc_favicons/favicon-96x96.png" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+      rel="stylesheet" />
+
+    <!-- <link rel="stylesheet" href="styles.css" /> -->
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        background-color: #ffffffe9;
+      }
+
+      .container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 0.1rem;
+        justify-content: space-between;
+      }
+
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.2rem;
+        background-color: #a9e2f7;
+        padding-inline: 0.1rem;
+        padding-top: 2px;
+        /* padding-bottom: 0.5rem; */
+      }
+
+      .row > * {
+        padding-left: 0px;
+        padding-right: 2px;
+      }
+
+      #landpageheading {
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: auto;
+        height: auto;
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: 0%;
+      }
+
+      .hint-container {
+        align-items: center;
+        justify-items: center;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
+        background-color: #f5f5f5;
+      }
+
+      .hint {
+        font-size: 0.9rem;
+        color: #374151;
+        margin-top: auto;
+        margin-bottom: auto;
+        text-align: center;
+      }
+
+      .req::after {
+        content: " *";
+        color: #dc3545;
+        font-weight: 700;
+      }
+
+      .field-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 12px;
+      }
+
+      .form-section-title {
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #111827;
+        margin: 6px 0 2px;
+      }
+
+      .form-section-sub {
+        font-size: 0.82rem;
+        color: #6b7280;
+        margin: 0 0 6px;
+      }
+
+      /* ---------- Languages dropdown (multi-select) ---------- */
+      .multi-dd {
+        width: 80%;
+      }
+
+      .multi-dd .dropdown-toggle {
+        width: 100%;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 0.5rem;
+        background: #fff;
+      }
+
+      .multi-dd .dropdown-toggle:focus {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+      }
+
+      .multi-dd .dropdown-menu {
+        width: 100%;
+        max-height: 280px;
+        overflow: auto;
+        padding: 10px;
+        border-radius: 12px;
+      }
+
+      .multi-dd .dd-search {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        padding-bottom: 8px;
+        z-index: 5;
+      }
+
+      .multi-dd .dd-search input {
+        border-radius: 10px;
+      }
+
+      .multi-dd .dd-items {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .multi-dd .dd-item {
+        display: flex;
+        gap: 2px;
+        align-items: center;
+        justify-content: start;
+        padding: 8px 10px;
+        border: 1px solid #f1f5f9;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      .multi-dd .dd-item:hover {
+        background: #f8fafc;
+      }
+
+      .multi-dd .badge-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+      }
+
+      .multi-dd .lang-badge {
+        background: #eef2ff;
+        color: #3730a3;
+        border: 1px solid #e0e7ff;
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+      }
+
+      .multi-dd .lang-badge button {
+        border: none;
+        background: transparent;
+        margin-left: 6px;
+        color: #3730a3;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .multi-dd.is-invalid .dropdown-toggle {
+        border-color: #dc3545;
+      }
+
+      /* Nice compact button text wrapping */
+      #langBtnText {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      input,
+      textarea {
+        cursor: text;
+      }
+
+      button,
+select,
+.btn,
+/* .form-control */
+.form-select,
+.dropdown-menu
+/* [role="button"], */
+/* [tabindex]:not([tabindex="-1"])  */ {
+        cursor: pointer;
+      }
+
+      /* Searchable Dropdown Styling */
+      .form-select[readonly] {
+        background-color: white;
+      }
+      input[list] {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%236b7280'%3e%3cpath d='M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+        background-size: 16px;
+      }
+      /* Datalist suggestions */
+      input[list]::-webkit-calendar-picker-indicator {
+        display: none;
+      }
+
+      /* ========== CUSTOM SPECIALIST DROPDOWN ========== */
+      .dropdown {
+        position: relative;
+      }
+
+      #specialistDropdown,
+      #councilDropdown {
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        z-index: 1060 !important;
+        width: 100% !important;
+        max-height: 240px;
+        overflow-y: auto;
+        border: 1px solid #ced4da;
+        border-radius: 0 0 0.375rem 0.375rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        /* background: white; */
+      }
+
+      .suggest-item {
+        padding: 10px 12px !important;
+        cursor: pointer !important;
+        border: none !important;
+        width: 100% !important;
+        text-align: left !important;
+      }
+
+      .suggest-item:hover {
+        background: #f8f9fa !important;
+      }
+
+      /* Make all dropdown menus scrollable */
+      .dropdown-menu {
+        max-height: 280px;
+        overflow-y: auto;
+      }
+
+      img {
+        max-width: 100px;
+        width: 5vw;
+        height: auto;
+        min-width: 50px;
+        padding-left: 2px;
+        padding-bottom: 2px;
+      }
+
+      footer {
+        padding: 0.5rem;
+        background-color: #a9e2f7;
+        border-top: 1px solid #e9ecef;
+        text-align: center;
+      }
+
+      /* Remove ALL green ticks & validation from dropdown search bars */
+      #drSpecialistSearch,
+      #drCouncilSearch,
+      #langSearch {
+        background-image: none !important;
+      }
+
+      /* Block HTML5 :valid green tick & borders */
+      #drSpecialistSearch:valid,
+      #drCouncilSearch:valid,
+      #langSearch:valid,
+      #drSpecialistSearch:not(:placeholder-shown),
+      #drCouncilSearch:not(:placeholder-shown),
+      #langSearch:not(:placeholder-shown) {
+        background-image: none !important;
+        border-color: #ced4da !important; /* Default gray */
+        box-shadow: none !important;
+      }
+
+      /* Block Bootstrap .is-valid green */
+      #drSpecialistSearch.is-valid,
+      #drCouncilSearch.is-valid,
+      #langSearch.is-valid {
+        background-image: none !important;
+        border-color: #ced4da !important; /* Force gray */
+      }
+
+      /* Focus state - blue only, no green */
+      #drSpecialistSearch:focus,
+      #drCouncilSearch:focus,
+      #langSearch:focus {
+        background-image: none !important;
+        border-color: #86b7fe !important; /* Bootstrap focus blue */
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+      }
+    </style>
+  </head>
+
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      background-color: #ffffffe9;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 0.1rem;
+      justify-content: space-between;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.2rem;
+      background-color: #a9e2f7;
+      padding-inline: 0.1rem;
+      padding-top: 2px;
+    }
+
+    .row > * {
+      padding-left: 0px;
+      padding-right: 2px;
+    }
+
+    #landpageheading {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      width: auto;
+      height: auto;
+      flex-grow: 1;
+      flex-shrink: 1;
+      flex-basis: 0%;
+    }
+
+    .hint-container {
+      align-items: center;
+      justify-items: center;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      background-color: #f5f5f5;
+    }
+
+    .hint {
+      font-size: 0.9rem;
+      color: #374151;
+      margin-top: auto;
+      margin-bottom: auto;
+      text-align: center;
+    }
+
+    .req::after {
+      content: " *";
+      color: #dc3545;
+      font-weight: 700;
+    }
+
+    .field-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .form-section-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #111827;
+      margin: 6px 0 2px;
+    }
+
+    .form-section-sub {
+      font-size: 0.82rem;
+      color: #6b7280;
+      margin: 0 0 6px;
+    }
+
+    /* ---------- Languages dropdown (multi-select) ---------- */
+    .multi-dd {
+      width: 80%;
+    }
+
+    .multi-dd .dropdown-toggle {
+      width: 100%;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 0.5rem;
+      background: #fff;
+    }
+
+    .multi-dd .dropdown-toggle:focus {
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+
+    .multi-dd .dropdown-menu {
+      width: 100%;
+      max-height: 280px;
+      overflow: auto;
+      padding: 10px;
+      border-radius: 12px;
+    }
+
+    .multi-dd .dd-search {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      padding-bottom: 8px;
+      z-index: 5;
+    }
+
+    .multi-dd .dd-search input {
+      border-radius: 10px;
+    }
+
+    .multi-dd .dd-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .multi-dd .dd-item {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+      justify-content: start;
+      padding: 8px 10px;
+      border: 1px solid #f1f5f9;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .multi-dd .dd-item:hover {
+      background: #f8fafc;
+    }
+
+    .multi-dd .badge-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .multi-dd .lang-badge {
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #e0e7ff;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+    }
+
+    .multi-dd .lang-badge button {
+      border: none;
+      background: transparent;
+      margin-left: 6px;
+      color: #3730a3;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .multi-dd.is-invalid .dropdown-toggle {
+      border-color: #dc3545;
+    }
+
+    /* Nice compact button text wrapping */
+    #langBtnText {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    input,
+    textarea {
+      cursor: text;
+    }
+
+    button,
+select,
+.btn,
+/* .form-control */
+.form-select,
+.dropdown-menu
+/* [role="button"], */
+/* [tabindex]:not([tabindex="-1"])  */ {
+      cursor: pointer;
+    }
+
+    /* Searchable Dropdown Styling */
+    .form-select[readonly] {
+      background-color: white;
+    }
+    input[list] {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%236b7280'%3e%3cpath d='M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      background-size: 16px;
+    }
+    /* Datalist suggestions */
+    input[list]::-webkit-calendar-picker-indicator {
+      display: none;
+    }
+
+    /* ========== CUSTOM SPECIALIST DROPDOWN ========== */
+    .dropdown {
+      position: relative;
+    }
+
+    #specialistMulti {
+      position: relative;
+    }
+
+    #specialistMulti .dropdown-menu {
+      position: absolute !important;
+      top: 100% !important;
+      left: 0 !important;
+      margin-top: 0 !important;
+      width: 100% !important;
+      transform: none !important;
+      z-index: 1060 !important;
+    }
+
+    #councilDropdown {
+      position: absolute !important;
+      top: 100% !important;
+      left: 0 !important;
+      z-index: 1060 !important;
+      width: 100% !important;
+      max-height: 240px;
+      overflow-y: auto;
+      border: 1px solid #ced4da;
+      border-radius: 0 0 0.375rem 0.375rem;
+      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+      background: white;
+    }
+
+    .suggest-item {
+      padding: 10px 12px !important;
+      cursor: pointer !important;
+      border: none !important;
+      width: 100% !important;
+      text-align: left !important;
+    }
+
+    .suggest-item:hover {
+      background: #f8f9fa !important;
+    }
+
+    /* Make all dropdown menus scrollable */
+    .dropdown-menu {
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    img {
+      max-width: 100px;
+      width: 5vw;
+      height: auto;
+      min-width: 50px;
+      padding-left: 2px;
+      padding-bottom: 2px;
+    }
+
+    footer {
+      padding: 0.5rem;
+      background-color: #a9e2f7;
+      border-top: 1px solid #e9ecef;
+      text-align: center;
+    }
+
+    /* Remove ALL green ticks & validation from dropdown search bars */
+    #specialistSearch,
+    #drCouncilSearch,
+    #langSearch {
+      background-image: none !important;
+    }
+
+    /* Block HTML5 :valid green tick & borders */
+    #specialistSearch:valid,
+    #drCouncilSearch:valid,
+    #langSearch:valid,
+    #specialistSearch:not(:placeholder-shown),
+    #drCouncilSearch:not(:placeholder-shown),
+    #langSearch:not(:placeholder-shown) {
+      background-image: none !important;
+      border-color: #ced4da !important;
+      box-shadow: none !important;
+    }
+
+    /* Block Bootstrap .is-valid green */
+    #specialistSearch.is-valid,
+    #drCouncilSearch.is-valid,
+    #langSearch.is-valid {
+      background-image: none !important;
+      border-color: #ced4da !important;
+    }
+
+    /* Focus state - blue only, no green */
+    #specialistSearch:focus,
+    #drCouncilSearch:focus,
+    #langSearch:focus {
+      background-image: none !important;
+      border-color: #86b7fe !important;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+    }
+
+    .form-check-input {
+      cursor: pointer;
+    }
+
+    #usePrefixChk {
+      border-color: #419cf8;
+      box-shadow: 0 0 0 0.15rem rgba(65, 156, 248, 0.25);
+    }
+
+    .prefix-options {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .prefix-options .form-check {
+      margin: 0;
+    }
+
+    .prefix-options .form-check-input {
+      cursor: pointer;
+    }
+
+    .prefix-options .form-check-label {
+      cursor: pointer;
+    }
+
+    #specialistMulti {
+      width: 100%;
+    }
+
+    #specialistMulti .dropdown-menu {
+      width: 100%;
+    }
+
+    #specialistMulti .dd-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid #f1f5f9;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #specialistMulti .dd-item:hover {
+      background: #f8fafc;
+    }
+
+    #specialistMulti .speciality-badge {
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #e0e7ff;
+      padding: 5px 8px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+    }
+
+    #specialistMulti .speciality-badge button {
+      border: none;
+      background: transparent;
+      margin-left: 6px;
+      color: #3730a3;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #specialistMulti .dropdown-toggle {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-align: left;
+    }
+
+    #specialistBtnText {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  </style>
+
+  <body>
+    <div class="container">
+      <div class="top-bar">
+        <div id="logo">
+          <a
+            href="https://github.com/skun1663-er"
+            target="_self"
+            rel="noopener">
+            <img src="assets/cutedoc.webp" alt="doctor image" />
+          </a>
+        </div>
+        <div id="landpageheading">
+          <h4 class="mb-1 mx-auto fs-3 fs-md-2 fs-sm-2">
+            Doctor Profile Entry
+          </h4>
+        </div>
+
+        <div class="d-flex gap-1">
+          <button id="openAddBtn" class="btn btn-primary fs-6 fs-md-4 px-1">
+            <i class="bi bi-plus-circle"></i> Add Doctor
+          </button>
+
+          <button
+            id="exportBtn"
+            class="btn btn-success d-none fs-6 fs-md-4 px-1">
+            <i class="bi bi-download"></i> Export to Excel
+          </button>
+        </div>
+      </div>
+
+      <div id="hintContainer" class="hint-container">
+        <div class="hint">
+          Add doctors one-by-one, then export a protected (read-only) Excel.
+        </div>
+      </div>
+
+      <div id="tableContainer" class="table-responsive d-none">
+        <table
+          id="doctorsTable"
+          class="table table-striped table-hover align-middle mt-3">
+          <thead class="table-dark">
+            <tr>
+              <th>Doctor Name</th>
+              <th>Mobile</th>
+              <th>Sex</th>
+              <th>Specialist</th>
+              <th>Registration No.</th>
+              <th>Medical Council / State</th>
+              <th>Designation</th>
+              <th>Qualification</th>
+              <th>Experience (Years)</th>
+              <th>Languages</th>
+              <th>Reporting Days</th>
+              <th>Doctor Fees</th>
+              <th>Clinic Charge</th>
+              <th>Payment Type</th>
+              <th>Payment Time</th>
+              <th>Google Reviews</th>
+              <th style="width: 110px">Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <!-- Modal -->
+
+      <div
+        class="modal fade"
+        id="doctorModal"
+        tabindex="-1"
+        aria-labelledby="doctorModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <form id="doctorForm" novalidate autocomplete="off">
+              <div class="modal-header">
+                <h5 class="modal-title" id="doctorModalLabel">
+                  <strong>Add Doctor</strong>
+                </h5>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"></button>
+              </div>
+
+              <div class="modal-body">
+                <div class="field-card">
+                  <div class="form-section-title">Basic Info</div>
+                  <div class="form-section-sub">
+                    Enter doctor details and add to the table below.
+                  </div>
+
+                  <div class="row g-3">
+                    <div class="col-12 col-md-3">
+                      <label class="form-label req">Prefix</label>
+
+                      <div class="prefix-options mt-1">
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="doctorPrefix"
+                            id="prefixNA"
+                            value=""
+                            checked />
+                          <label class="form-check-label" for="prefixNA">
+                            Not Applicable
+                          </label>
+                        </div>
+
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="doctorPrefix"
+                            id="prefixDr"
+                            value="Dr." />
+                          <label class="form-check-label" for="prefixDr">
+                            Dr.
+                          </label>
+                        </div>
+
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="radio"
+                            name="doctorPrefix"
+                            id="prefixProfDr"
+                            value="Prof. Dr." />
+                          <label class="form-check-label" for="prefixProfDr">
+                            Prof. Dr.
+                          </label>
+                        </div>
+                      </div>
+
+                      <div
+                        class="invalid-feedback d-block"
+                        id="prefixError"
+                        style="display: none">
+                        Please select a prefix.
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-md-3">
+                      <label class="form-label req" for="drName"
+                        >Doctor Name</label
+                      >
+                      <input
+                        type="text"
+                        id="drName"
+                        class="form-control"
+                        maxlength="120"
+                        pattern="[A-Za-z][A-Za-z .'\-]*"
+                        placeholder="[First name] [Last name]"
+                        required />
+                      <div class="invalid-feedback">
+                        Doctor name with 'at least two capital letters' is
+                        required.
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                      <label class="form-label req" for="drMobile"
+                        >Mobile (10 digits, starts 6-9)</label
+                      >
+                      <input
+                        type="tel"
+                        id="drMobile"
+                        class="form-control"
+                        inputmode="numeric"
+                        pattern="[6-9]\d{9}"
+                        maxlength="10"
+                        placeholder="e.g. 9876543210" />
+                      <div class="invalid-feedback">
+                        Enter a valid / unique 10-digit mobile starting with
+                        6-9.
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <label class="form-label req" for="drSex">Sex</label>
+                      <select id="drSex" class="form-select" required>
+                        <option value="" selected disabled>Select</option>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
+                        <option value="OTHER">Other</option>
+                      </select>
+                      <div class="invalid-feedback">Please select sex.</div>
+                    </div>
+
+                    <div class="col-12 col-lg-4">
+                      <label class="form-label req" for="specialistMulti">
+                        Speciality
+                      </label>
+
+                      <div id="specialistMulti" class="multi-dd dropdown">
+                        <button
+                          class="dropdown-toggle"
+                          type="button"
+                          data-bs-display="static"
+                          data-bs-toggle="dropdown"
+                          data-bs-auto-close="outside"
+                          aria-expanded="false">
+                          <span id="specialistBtnText"
+                            >Select specialities</span
+                          >
+                        </button>
+
+                        <div class="dropdown-menu">
+                          <div class="dd-search">
+                            <input
+                              id="specialistSearch"
+                              class="form-control"
+                              placeholder="Search speciality..."
+                              autocomplete="off" />
+                          </div>
+
+                          <div id="specialistList" class="dd-items"></div>
+                        </div>
+
+                        <div id="specialistBadges" class="badge-wrap"></div>
+
+                        <div
+                          class="invalid-feedback d-block"
+                          id="specialistError"
+                          style="display: none">
+                          Please select at least one speciality.
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <label class="form-label" id="regnLabel" for="drRegnNo"
+                        >Registration No.</label
+                      >
+                      <input
+                        type="text"
+                        id="drRegnNo"
+                        class="form-control"
+                        maxlength="30"
+                        placeholder="e.g. WB-12345" />
+                      <div class="invalid-feedback">
+                        Registration number is required (and must be unique)
+                        when council is not "Others".
+                      </div>
+                      <div class="form-text">
+                        If council is not "Others", this becomes mandatory.
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <label class="form-label req" for="councilDropdown"
+                        >Medical Council / State</label
+                      >
+                      <div class="dropdown">
+                        <input
+                          type="text"
+                          id="drCouncilSearch"
+                          class="form-control"
+                          placeholder="Search council/state..."
+                          autocomplete="off"
+                          required />
+                        <div id="councilDropdown" class="dropdown-menu"></div>
+                      </div>
+                      <input type="hidden" id="drCouncil" required />
+                      <div class="invalid-feedback">Please select council.</div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <label class="form-label" for="drDesignation"
+                        >Designation</label
+                      >
+                      <input
+                        type="text"
+                        id="drDesignation"
+                        class="form-control"
+                        maxlength="80"
+                        placeholder="e.g. Consultant" />
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <label class="form-label req" for="drQualification"
+                        >Qualification</label
+                      >
+                      <input
+                        type="text"
+                        id="drQualification"
+                        class="form-control"
+                        maxlength="120"
+                        placeholder="e.g. MBBS, MD"
+                        required />
+                    </div>
+
+                    <!-- Languages dropdown style -->
+                    <div class="col-12 col-lg-4">
+                      <label class="form-label req" for="langMulti"
+                        >Languages</label
+                      >
+
+                      <div id="langMulti" class="multi-dd dropdown">
+                        <button
+                          class="dropdown-toggle"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          data-bs-auto-close="outside"
+                          aria-expanded="false">
+                          <span id="langBtnText">Select languages</span>
+                          <!-- <i class="bi bi-chevron-down"></i> -->
+                        </button>
+
+                        <div class="dropdown-menu">
+                          <div class="dd-search">
+                            <input
+                              id="langSearch"
+                              class="form-control"
+                              placeholder="Search language..." />
+                          </div>
+                          <div id="langList" class="dd-items"></div>
+                        </div>
+
+                        <div id="langBadges" class="badge-wrap"></div>
+                        <div
+                          class="invalid-feedback d-block"
+                          id="langError"
+                          style="display: none">
+                          Please select at least one language.
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Right numbers -->
+                    <div class="col-12 col-lg-8">
+                      <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                          <label class="form-label req" for="drExperience"
+                            >Experience</label
+                          >
+                          <input
+                            type="number"
+                            id="drExperience"
+                            class="form-control"
+                            placeholder="years"
+                            min="0"
+                            step="1"
+                            required />
+                          <div class="invalid-feedback">
+                            Must be a positive number.
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                          <label class="form-label req" for="drReportingDay"
+                            >Reporting Days</label
+                          >
+                          <input
+                            type="number"
+                            id="drReportingDay"
+                            class="form-control"
+                            placeholder="days"
+                            min="0"
+                            step="1"
+                            required />
+                          <div class="invalid-feedback">
+                            Must be a positive number.
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                          <label class="form-label req" for="drFees"
+                            >Doctor Fees</label
+                          >
+                          <input
+                            type="number"
+                            id="drFees"
+                            class="form-control"
+                            placeholder="₹"
+                            min="0"
+                            step="1"
+                            required />
+                          <div class="invalid-feedback">
+                            Must be a positive number.
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                          <label class="form-label req" for="drClinicCharge"
+                            >Clinic Charge</label
+                          >
+                          <input
+                            type="number"
+                            id="drClinicCharge"
+                            class="form-control"
+                            placeholder="₹"
+                            min="0"
+                            step="1"
+                            required />
+                          <div class="invalid-feedback">
+                            Must be a positive number.
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-3">
+                          <label class="form-label req" for="payType"
+                            >Payment Type</label
+                          >
+                          <select id="payType" class="form-select" required>
+                            <option value="" disabled>Select type</option>
+                            <option value="online">online</option>
+                            <option value="offline">offline</option>
+                            <option value="both" selected>both</option>
+                          </select>
+                          <div class="invalid-feedback">
+                            Please select a payment type.
+                          </div>
+                        </div>
+
+                        <div class="col-6 col-md-6">
+                          <label class="form-label req" for="payTime"
+                            >Payment Time</label
+                          >
+                          <select id="payTime" class="form-select" required>
+                            <option value="" disabled>Select timing</option>
+                            <option value="Before_SL" selected>
+                              Before_SL (giving serial no.)
+                            </option>
+                            <option value="Before_IN">
+                              Before_IN (patient-in)
+                            </option>
+                          </select>
+                          <div class="invalid-feedback">
+                            Please select a payment time.
+                          </div>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                          <label class="form-label" for="drGoogleReviews"
+                            >Google Reviews</label
+                          >
+                          <input
+                            type="number"
+                            id="drGoogleReviews"
+                            class="form-control"
+                            min="0"
+                            max="5"
+                            step="0.1"
+                            value="0" />
+                          <div class="invalid-feedback">
+                            Google reviews must be between 0 and 5.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /row -->
+                </div>
+                <!-- /card -->
+              </div>
+              <!-- /modal-body -->
+
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal">
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  id="modalSubmitBtn"
+                  class="btn btn-primary">
+                  <strong>Add Doctor</strong>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- footer -->
+      <footer>
+        &copy;2026.
+        <span>
+          Created by
+          <a href="https://github.com/skun1663-er">skun</a></span
+        >
+        | All rights reserved.
+      </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+    <!-- <script src="script.js"></script> -->
+    <script>
+      // ====== Dropdown data ======
+      const SPECIALISTS = [
+        "Cardiologist",
+        "Pediatric Cardiologist",
+        "Hematologist",
+        "Dermatologist",
+        "Otolaryngologist",
+        "Allergologist\/Allergist",
+        "Dentist",
+        "Nephrologist",
+        "Neurologist",
+        "Oncologist",
+        "Orthopedist",
+        "General Practitioner",
+        "Pediatrician",
+        "Psychiatrist",
+        "Diabetologist",
+        "Sexologist",
+        "Urologist",
+        "Gynecologist",
+        "Pulmonologist",
+        "Radiologist",
+        "Hepatologist",
+        "Endocrinologist",
+        "Gastroenterologist",
+        "Physiotherapist",
+        "Geriatrician",
+        "Ophthalmologist",
+        "Rheumatologist",
+        "General Surgeon",
+        "Proctologist",
+        "Plastic Surgeon",
+        "Dietitian",
+        "Physiatrist",
+        "Transplant Surgeon",
+        "Laparoscopy Surgeon",
+        "Cardiac Surgeon",
+        "Neonatologist",
+        "Pediatric Urologist",
+        "Pediatric Neurosurgeon",
+        "Anesthesiologist",
+        "Speech Therapist",
+        "Homeopathic Doctor",
+        "Critical Care Specialist",
+        "Neuropsychiatrist",
+        "Optometrist",
+        "Psychologist",
+        "Ayurvedic Doctor",
+        "Consultant Physician",
+        "Audiologist",
+        "Neurosurgeon",
+        "Maxillofacial Surgeon",
+        "Periodontist",
+        "Naturopathic Doctor",
+        "Pediatric Dentist",
+        "Orthodontist",
+        "Endodontist",
+        "Oral Pathologist",
+        "Prosthodontist",
+        "Vascular Surgeon",
+        "Gastro Surgeon",
+        "Obstetrician",
+        "Surgical Oncologist",
+      ];
+
+      // includes "Others" (conditional REGN_NO rule)
+      const COUNCILS = [
+        "Andhra Boards for Ayurveda and Homoeopathy",
+        "Andhra Pradesh Medical Council",
+        "Andhra Pradesh State Dental Council",
+        "Arunachal Pradesh Indian Medicine Council",
+        "Arunachal Pradesh Medical Council",
+        "Arunachal Pradesh State Dental Council",
+        "Assam Medical Council",
+        "Assam State Council of Indian Medicine",
+        "Assam State Dental Council",
+        "Bhartiya Chikitsa Parishad (Uttaranchal)",
+        "Bihar Medical Council",
+        "Bihar State Dental Council",
+        "Board of Ayurvedic and Unani Systems of Medicine (Haryana)",
+        "Board of Ayurvedic and Unani Systems of Medicine (Himachal Pradesh)",
+        "Board of Ayurvedic and Unani Systems of Medicine (Jammu)",
+        "Board of Ayurvedic and Unani Systems of Medicine(Punjab)",
+        "Board of Ayurvedic and Unani Tibbi Systems of Medicines (U.P.)",
+        "Board of Indian Medicine (Rajasthan)",
+        "Chhattisgarh Board of Ayurvedic and Unani System of Medicine and Naturopathy",
+        "Chhatisgarh State Dental Council",
+        "CHA",
+        "Delhi Medical Council",
+        "Delhi State Dental Council",
+        "Dental Council of Chandigarh",
+        "Directorate of Ayush (Delhi Board of Indian Systems of Medicine)",
+        "Goa Board of Indian Systems of Medicine and Homoeopathy",
+        "Goa Medical Council",
+        "Goa State Dental Council",
+        "Gujarat Board of Ayurvedic and Unani Systems of Medicine",
+        "Gujarat Medical Council",
+        "Gujarat State Dental Council",
+        "Haryana Medical Council",
+        "Haryana State Dental Council",
+        "Himachal Pradesh Medical Council",
+        "Himachal Pradesh State Dental Council",
+        "Inspector Board of Indian Medicines, Department of AYUSH (Telangana)",
+        "J & K Medical Council",
+        "J &K State Dental Council",
+        "Jharkhand State Chikitsa Parishad",
+        "Jharkhand Medical Council",
+        "Jharkhand State Dental Council",
+        "Karnataka Ayurvedic and Unani Practitioners Board",
+        "Karnataka Medical Council",
+        "Karnataka State Dental Council",
+        "Kerala State Medical Council",
+        "Kerala State Dental Council",
+        "Madhya Pradesh Ayurvedic-Unani and Prakritic Chikitsa Board",
+        "Madhya Pradesh State Dental Council",
+        "Maharashtra Council of Indian Medicine",
+        "Maharashtra Medical Council",
+        "Maharashtra State Dental Council",
+        "MAKAUT",
+        "Manipur Medical Council",
+        "Manipur State Dental Council",
+        "Meghalaya State Dental Council",
+        "MCI",
+        "Mizoram Medical Council",
+        "Mizoram State Registration Tribunal",
+        "Nagaland Medical Council",
+        "Nagaland State Dental Council",
+        "Odisha Medical Council",
+        "Orissa State Council of Ayurvedic Medicine",
+        "Orissa State Dental Council",
+        "Paschim Banga Ayurved Parishad",
+        "Punjab Medical Council",
+        "Punjab State Dental Council",
+        "Rajasthan Medical Council",
+        "Rajasthan State Dental Council",
+        "Rehabilitation Council of India",
+        "State Council Of Unani Medicine (West Bengal)",
+        "State Council of Ayurvedic and Unani Medicine (Patna)",
+        "State Dental Council, Puducherry",
+        "Sikkim Dental Registration Tribunal",
+        "Sikkim Medical Council",
+        "Tamil Nadu Board of Indian Medicine",
+        "Tamil Nadu Medical Council",
+        "Tamil Nadu State Dental Council",
+        "Telangana Dental Council",
+        "Telangana Medical Council",
+        "The Karnataka State Dental Council",
+        "Travancore-Cochin Medical Councils (Combined Council)",
+        "Tripura Medical Council",
+        "Tripura State Dental Council",
+        "Uttar Pradesh Medical Council",
+        "Uttar Pradesh State Dental Council",
+        "Uttarakhand Medical Council",
+        "West Bengal Medical Council",
+        "West Bengal State Dental Council",
+        "Others",
+      ];
+
+      const COUNCILS2 = [
+        "Andaman and Nicobar Islands",
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Bihar",
+        "Chandigarh",
+        "Chhattisgarh",
+        "Dadar and Nagar Haveli",
+        "Daman and Diu",
+        "Delhi",
+        "Goa",
+        "Gujarat",
+        "Haryana",
+        "Himachal Pradesh",
+        "Jammu and Kashmir",
+        "Jharkhand",
+        "Karnataka",
+        "Kerala",
+        "Lakshadweep",
+        "Madhya Pradesh",
+        "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
+        "Puducherry",
+        "Punjab",
+        "Rajasthan",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttar Pradesh",
+        "Uttarakhand",
+        "West Bengal",
+      ];
+
+      const LANGUAGES = [
+        "Assamese",
+        "Bengali",
+        "English",
+        "Gujarati",
+        "Hindi",
+        "Kannada",
+        "Malayalam",
+        "Marathi",
+        "Nepali",
+        "Odia",
+        "Punjabi",
+        "Tamil",
+        "Telugu",
+        "Urdu",
+      ];
+
+      const EXCEL_LOCK_PASSWORD = "1663"; // Change this to your desired password
+
+      // ====== State ======
+      const doctors = []; // keys = excel keys
+      let editingIndex = null;
+      let mobileIndex = new Set(); // DR_MOBILE
+      let regnIndex = new Set(); // REGN_NO (uppercase)
+
+      // ====== DOM ======
+      const tableContainer = document.getElementById("tableContainer");
+      const tbody = document.querySelector("#doctorsTable tbody");
+      const exportBtn = document.getElementById("exportBtn");
+      const openAddBtn = document.getElementById("openAddBtn");
+
+      // Council dropdown DOM
+      const drCouncilSearch = document.getElementById("drCouncilSearch");
+      const councilDropdown = document.getElementById("councilDropdown");
+      const drCouncil = document.getElementById("drCouncil");
+
+      const doctorModal = new bootstrap.Modal(
+        document.getElementById("doctorModal"),
+        {
+          backdrop: "static", // Prevents closing when clicking outside
+          keyboard: false, // Prevents ESC key closing
+        },
+      );
+      // Fix ALL focus warnings (Pure JavaScript)
+      doctorModal._element.addEventListener("shown.bs.modal", function () {
+        drName.focus(); // Safe focus on first field
+      });
+
+      doctorModal._element.addEventListener("hide.bs.modal", function () {
+        // Pure JS - no TypeScript
+        if (document.activeElement) {
+          document.activeElement.blur();
+        }
+      });
+
+      // const drMobile = document.getElementById("drMobile");
+
+      const doctorForm = document.getElementById("doctorForm");
+      const doctorModalLabel = document.getElementById("doctorModalLabel");
+      const modalSubmitBtn = document.getElementById("modalSubmitBtn");
+
+      const drName = document.getElementById("drName");
+      const drMobile = document.getElementById("drMobile");
+      const drSex = document.getElementById("drSex");
+      const drRegnNo = document.getElementById("drRegnNo");
+      const drDesignation = document.getElementById("drDesignation");
+      const drQualification = document.getElementById("drQualification");
+      const drExperience = document.getElementById("drExperience");
+      const drReportingDay = document.getElementById("drReportingDay");
+      const drFees = document.getElementById("drFees");
+      const drClinicCharge = document.getElementById("drClinicCharge");
+      const payType = document.getElementById("payType");
+      const payTime = document.getElementById("payTime");
+      const drGoogleReviews = document.getElementById("drGoogleReviews");
+      const regnLabel = document.getElementById("regnLabel");
+
+      // Languages UI DOM
+      const langMulti = document.getElementById("langMulti");
+      const langBtnText = document.getElementById("langBtnText");
+      const langSearch = document.getElementById("langSearch");
+      const langList = document.getElementById("langList");
+      const langBadges = document.getElementById("langBadges");
+      const langError = document.getElementById("langError");
+
+      drMobile.addEventListener("input", applyMobileOrRegnRule);
+      drCouncil.addEventListener("change", applyMobileOrRegnRule);
+      drRegnNo.addEventListener("input", applyMobileOrRegnRule);
+
+      // const drPrefix = document.getElementById("drPrefix");
+      // const usePrefixChk = document.getElementById("usePrefixChk");
+      // const prefixRequiredFeedback = document.getElementById(
+      //   "prefixRequiredFeedback",
+      // );
+      const prefixNA = document.getElementById("prefixNA");
+      const prefixDr = document.getElementById("prefixDr");
+      const prefixProfDr = document.getElementById("prefixProfDr");
+      // const prefixError = document.getElementById("prefixError");
+      const specialistMulti = document.getElementById("specialistMulti");
+      const specialistBtnText = document.getElementById("specialistBtnText");
+      const specialistSearch = document.getElementById("specialistSearch");
+      const specialistList = document.getElementById("specialistList");
+      const specialistBadges = document.getElementById("specialistBadges");
+      const specialistError = document.getElementById("specialistError");
+      let selectedSpecialists = new Set();
+
+      // ====== Helpers ======
+      function getSelectedPrefix() {
+        const selected = document.querySelector(
+          'input[name="doctorPrefix"]:checked',
+        );
+
+        return selected ? selected.value : "";
+      }
+
+      function setSelectedPrefix(prefix) {
+        const value = String(prefix || "").trim();
+
+        prefixNA.checked = value === "";
+        prefixDr.checked = value === "Dr.";
+        prefixProfDr.checked = value === "Prof. Dr.";
+
+        validatePrefix();
+      }
+
+      function validatePrefix() {
+        const selected = document.querySelector(
+          'input[name="doctorPrefix"]:checked',
+        );
+
+        const ok = !!selected;
+
+        const showError = doctorForm.classList.contains("was-validated");
+
+        prefixError.style.display = !ok && showError ? "block" : "none";
+
+        return ok;
+      }
+      function applyPrefixRule() {
+        const prefixVal = drPrefix.value.trim();
+
+        // If checkbox off, don't block.
+        if (!usePrefixChk.checked) {
+          prefixRequiredFeedback.style.display = "none";
+          drPrefix.classList.remove("is-invalid");
+          drPrefix.setCustomValidity("");
+          return true;
+        }
+
+        // If checkbox on, require a prefix selection.
+        if (!prefixVal) {
+          prefixRequiredFeedback.style.display = "block";
+          drPrefix.classList.add("is-invalid");
+          drPrefix.setCustomValidity("Prefix is required");
+          return false;
+        }
+
+        prefixRequiredFeedback.style.display = "none";
+        drPrefix.classList.remove("is-invalid");
+        drPrefix.setCustomValidity("");
+        return true;
+      }
+
+      function getFullDoctorName() {
+        const prefix = getSelectedPrefix();
+        const name = drName.value.trim();
+
+        return prefix ? `${prefix} ${name}`.trim() : name;
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function validateDoctorName() {
+        const v = drName.value.trim();
+        const upperCount = (v.match(/[A-Z]/g) || []).length;
+
+        const valid =
+          v.length >= 2 &&
+          v.length <= 50 &&
+          /^[A-Za-z. ]+$/.test(v) &&
+          upperCount >= 2 &&
+          !/ {2,}/.test(v) &&
+          !/\.{2,}/.test(v) &&
+          !/^\./.test(v);
+
+        drName.setCustomValidity(valid ? "" : "invalid");
+        return valid;
+      }
+
+      function fillSelect(selectEl, options, placeholder = "Select") {
+        selectEl.innerHTML =
+          `<option value="" selected disabled>${placeholder}</option>` +
+          options
+            .map(
+              (o) =>
+                `<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`,
+            )
+            .join("");
+      }
+
+      function applyMobileOrRegnRule() {
+        const mobile = drMobile.value.trim();
+        const regn = drRegnNo.value.trim();
+        const council = drCouncil.value.trim();
+        const councilIsOthers = council === "Others";
+
+        const hasMobile = /^[6-9]\d{9}$/.test(mobile);
+        const hasRegn = regn !== "";
+
+        // Reset
+        drMobile.setCustomValidity("");
+        drRegnNo.setCustomValidity("");
+        drCouncil.setCustomValidity("");
+
+        drCouncil.classList.remove("is-invalid");
+        drCouncilSearch.classList.remove("is-invalid");
+
+        // =========================================
+        // CASE 1:
+        // NO REGN + NO MOBILE
+        // =========================================
+        if (!hasRegn && !hasMobile) {
+          drCouncil.value = "";
+          drCouncilSearch.value = "";
+
+          drCouncilSearch.disabled = true;
+
+          drMobile.setCustomValidity(
+            "Mobile number or registration number required",
+          );
+
+          drRegnNo.setCustomValidity(
+            "Registration number or mobile number required",
+          );
+
+          renderCouncilList("");
+
+          return;
+        }
+
+        // Enable council
+        drCouncilSearch.disabled = false;
+
+        // =========================================
+        // CASE 2:
+        // REGISTRATION EXISTS
+        // Council CANNOT be Others
+        // =========================================
+
+        if (hasRegn) {
+          drCouncil.required = true;
+
+          drCouncilSearch.disabled = false;
+
+          // Remove Others from dropdown
+          renderCouncilList(drCouncilSearch.value);
+
+          // Safety cleanup
+          if (drCouncil.value === "Others") {
+            drCouncil.value = "";
+            drCouncilSearch.value = "";
+          }
+
+          return;
+        }
+
+        // =========================================
+        // CASE 3:
+        // NO REGN + MOBILE EXISTS
+        // ONLY Others allowed
+        // =========================================
+        if (!hasRegn && hasMobile) {
+          drCouncil.required = true;
+
+          drCouncil.value = "Others";
+          drCouncilSearch.value = "Others";
+
+          drCouncilSearch.disabled = true;
+
+          return;
+        }
+      }
+
+      // ====== NEW: Dynamic council population ======
+      function updateCouncilDropdown(forceValue = "") {
+        const isHomeopathy = selectedSpecialists.has("Homeopathic Doctor");
+
+        const councilOptions = isHomeopathy ? COUNCILS2 : COUNCILS;
+        const placeholder = isHomeopathy ? "Select State" : "Select Council";
+
+        fillSelect(drCouncil, councilOptions, placeholder);
+
+        if (forceValue && councilOptions.includes(forceValue)) {
+          drCouncil.value = forceValue;
+        } else {
+          drCouncil.value = "";
+        }
+
+        applyMobileOrRegnRule();
+        validateDuplicateRegnNo();
+      }
+
+      // Initialize searchable dropdowns
+      renderSpecialistList("");
+      renderCouncilList("");
+
+      function setDefaults() {
+        drExperience.value = "";
+        drFees.value = "";
+        drReportingDay.value = "";
+        drClinicCharge.value = "";
+        drGoogleReviews.value = 0;
+      }
+
+      function updateUiVisibility() {
+        const hasRows = doctors.length > 0;
+        tableContainer.classList.toggle("d-none", !hasRows);
+        exportBtn.classList.toggle("d-none", !hasRows);
+
+        // Optional: Hide hint after first doctor
+        const hintContainer = document.getElementById("hintContainer");
+        hintContainer.classList.toggle("d-none", hasRows);
+      }
+
+      // ====== Validations ======
+      function validateMobile() {
+        const v = drMobile.value.trim();
+
+        // ✅ Empty mobile is allowed
+        if (v === "") {
+          drMobile.setCustomValidity("");
+          drMobile.classList.remove("is-invalid");
+          return true;
+        }
+
+        // ✅ Validate only if entered
+        const ok = /^[6-9]\d{9}$/.test(v);
+
+        drMobile.setCustomValidity(ok ? "" : "invalid");
+
+        if (ok) {
+          drMobile.classList.remove("is-invalid");
+        } else {
+          drMobile.classList.add("is-invalid");
+        }
+
+        return ok;
+      }
+
+      function validateIntegers() {
+        const intFields = [
+          drExperience,
+          drReportingDay,
+          drFees,
+          drClinicCharge,
+        ];
+        let ok = true;
+        for (const el of intFields) {
+          const raw = String(el.value ?? "").trim();
+          const n = raw === "" ? NaN : Number(raw);
+          const valid = !Number.isNaN(n) && n >= 0 && Number.isInteger(n);
+          el.setCustomValidity(valid ? "" : "invalid");
+          if (!valid) ok = false;
+        }
+        return ok;
+      }
+
+      function validateGoogleReviews() {
+        const raw = String(drGoogleReviews.value ?? "").trim();
+        if (raw === "") return true;
+        const n = Number(raw);
+        const valid = !Number.isNaN(n) && n >= 0 && n <= 5;
+        drGoogleReviews.setCustomValidity(valid ? "" : "invalid");
+        return valid;
+      }
+
+      // ====== Speciality multi-select ======
+
+      function formatSpecialistButtonText() {
+        const arr = Array.from(selectedSpecialists);
+
+        if (arr.length === 0) return "Select specialities";
+
+        return arr.join(", ");
+      }
+
+      function renderSpecialistList(filterText = "") {
+        const q = filterText.trim().toLowerCase();
+
+        const items = SPECIALISTS.filter((s) => s.toLowerCase().includes(q))
+          .map((s) => {
+            const checked = selectedSpecialists.has(s);
+
+            return `
+              <div class="dd-item" data-specialist="${escapeHtml(s)}">
+                <div class="d-flex align-items-center gap-2">
+                  <input
+                    class="form-check-input m-0"
+                    type="checkbox"
+                    ${checked ? "checked" : ""}
+                  />
+                  <div>${escapeHtml(s)}</div>
+                </div>
+
+                ${
+                  checked
+                    ? `<span class="badge text-bg-success">Selected</span>`
+                    : ""
+                }
+              </div>
+            `;
+          })
+          .join("");
+
+        specialistList.innerHTML =
+          items || `<div class="text-muted p-2">No results</div>`;
+      }
+
+      function renderSpecialistBadges() {
+        const arr = Array.from(selectedSpecialists);
+
+        specialistBtnText.textContent = formatSpecialistButtonText();
+
+        if (arr.length === 0) {
+          specialistBadges.innerHTML = "";
+          return;
+        }
+
+        specialistBadges.innerHTML = arr
+          .map(
+            (s) => `
+              <span class="speciality-badge">
+                ${escapeHtml(s)}
+                <button
+                  type="button"
+                  data-remove-specialist="${escapeHtml(s)}">
+                  ×
+                </button>
+              </span>
+            `,
+          )
+          .join("");
+      }
+
+      function validateSpecialists() {
+        const ok = selectedSpecialists.size > 0;
+
+        const showError = doctorForm.classList.contains("was-validated");
+
+        specialistMulti.classList.toggle("is-invalid", !ok && showError);
+
+        specialistError.style.display = !ok && showError ? "block" : "none";
+
+        return ok;
+      }
+
+      function clearSpecialistsUI() {
+        selectedSpecialists.clear();
+
+        specialistSearch.value = "";
+
+        renderSpecialistList("");
+        renderSpecialistBadges();
+        validateSpecialists();
+      }
+
+      function setSpecialistsFromCSV(csv) {
+        selectedSpecialists.clear();
+
+        String(csv || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+          .forEach((s) => {
+            if (SPECIALISTS.includes(s)) {
+              selectedSpecialists.add(s);
+            }
+          });
+
+        specialistSearch.value = "";
+
+        renderSpecialistList("");
+        renderSpecialistBadges();
+        validateSpecialists();
+      }
+
+      function getSpecialistsCSV() {
+        return Array.from(selectedSpecialists).join(", ");
+      }
+
+      specialistList.addEventListener("click", (e) => {
+        const item = e.target.closest(".dd-item");
+
+        if (!item) return;
+
+        const specialist = item.dataset.specialist;
+
+        if (selectedSpecialists.has(specialist)) {
+          selectedSpecialists.delete(specialist);
+        } else {
+          selectedSpecialists.add(specialist);
+        }
+
+        renderSpecialistList(specialistSearch.value);
+
+        renderSpecialistBadges();
+        validateSpecialists();
+
+        // Update council according to selected specialities
+        updateCouncilDropdown();
+      });
+
+      specialistBadges.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-remove-specialist]");
+
+        if (!btn) return;
+
+        const specialist = btn.dataset.removeSpecialist;
+
+        selectedSpecialists.delete(specialist);
+
+        renderSpecialistList(specialistSearch.value);
+
+        renderSpecialistBadges();
+        validateSpecialists();
+
+        updateCouncilDropdown();
+      });
+
+      specialistSearch.addEventListener("input", () => {
+        renderSpecialistList(specialistSearch.value);
+      });
+
+      renderSpecialistList("");
+      renderSpecialistBadges();
+
+      // council
+      function validateCouncil() {
+        if (drCouncilSearch.disabled) {
+          drCouncil.setCustomValidity("");
+          drCouncilSearch.setCustomValidity("");
+          return true;
+        }
+        const value = drCouncil.value.trim();
+        const searchValue = drCouncilSearch.value.trim();
+        const isValid = value.length > 0 && value === searchValue;
+
+        // ✅ ALWAYS set custom validity - prevents HTML5 :valid green
+        drCouncil.setCustomValidity(
+          !isValid ? "Please select from dropdown" : "",
+        );
+        drCouncilSearch.setCustomValidity(
+          !isValid ? "Please select from dropdown" : "",
+        );
+
+        // Clear Bootstrap classes
+        drCouncilSearch.classList.remove("is-invalid", "is-valid");
+        drCouncil.classList.remove("is-invalid", "is-valid");
+
+        // ONLY show green after form submit AND valid
+        if (doctorForm.classList.contains("was-validated") && isValid) {
+          drCouncilSearch.classList.add("is-valid");
+          drCouncil.classList.add("is-valid");
+        } else if (doctorForm.classList.contains("was-validated")) {
+          drCouncilSearch.classList.add("is-invalid");
+          drCouncil.classList.add("is-invalid");
+        }
+        return isValid;
+      }
+
+      function validateDuplicateMobile() {
+        const mobile = drMobile.value.trim();
+        const currentOriginal =
+          editingIndex !== null
+            ? String(doctors[editingIndex]?.DR_MOBILE || "").trim()
+            : "";
+
+        drMobile.classList.remove("is-invalid");
+        if (!mobile) return true;
+
+        const exists = mobileIndex.has(mobile) && mobile !== currentOriginal;
+        if (exists) {
+          drMobile.setCustomValidity("duplicate");
+          drMobile.classList.add("is-invalid");
+          return false;
+        } else {
+          if (drMobile.validationMessage === "duplicate")
+            drMobile.setCustomValidity("");
+        }
+        return true;
+      }
+
+      function validateDuplicateRegnNo() {
+        const regn = drRegnNo.value.trim().toUpperCase();
+        const currentOriginal =
+          editingIndex !== null
+            ? String(doctors[editingIndex]?.REGN_NO || "")
+                .trim()
+                .toUpperCase()
+            : "";
+
+        drRegnNo.setCustomValidity("");
+        drRegnNo.classList.remove("is-invalid");
+
+        if (drRegnNo.required && !regn) {
+          drRegnNo.setCustomValidity("required");
+          drRegnNo.classList.add("is-invalid");
+          return false;
+        }
+
+        if (!regn) return true;
+
+        const exists = regnIndex.has(regn) && regn !== currentOriginal;
+        if (exists) {
+          drRegnNo.setCustomValidity("duplicate");
+          drRegnNo.classList.add("is-invalid");
+          return false;
+        }
+        return true;
+      }
+
+      // ====== Languages dropdown multi-select (with "first 2 + +N more") ======
+      let selectedLanguages = new Set();
+
+      function formatLangButtonText() {
+        const arr = Array.from(selectedLanguages);
+
+        if (arr.length === 0) return "Select languages";
+        if (arr.length === 1) return arr[0];
+        if (arr.length === 2) return `${arr[0]}, ${arr[1]}`;
+
+        // first 2 + remaining
+        return `${arr[0]}, ${arr[1]} +${arr.length - 2} more`;
+      }
+
+      function renderLanguageList(filterText = "") {
+        const q = filterText.trim().toLowerCase();
+        const items = LANGUAGES.filter((l) => l.toLowerCase().includes(q))
+          .map((l) => {
+            const checked = selectedLanguages.has(l);
+            return `
+                      <div class="dd-item" data-lang="${escapeHtml(l)}">
+                        <div class="d-flex align-items-center gap-2">
+                          <input class="form-check-input m-0" type="checkbox" ${
+                            checked ? "checked" : ""
+                          } />
+                          <div>${escapeHtml(l)}</div>
+                        </div>
+                        ${
+                          checked
+                            ? `<span class="badge text-bg-success">Selected</span>`
+                            : ``
+                        }
+                      </div>
+                    `;
+          })
+          .join("");
+
+        langList.innerHTML =
+          items || `<div class="text-muted p-2">No results</div>`;
+      }
+
+      function renderLanguageBadges() {
+        const arr = Array.from(selectedLanguages);
+
+        langBtnText.textContent = formatLangButtonText();
+
+        if (arr.length === 0) {
+          langBadges.innerHTML = "";
+          return;
+        }
+
+        langBadges.innerHTML = arr
+          .map(
+            (l) => `
+                      <span class="lang-badge">
+                        ${escapeHtml(l)}
+                        <button type="button" data-remove="${escapeHtml(l)}">×</button>
+                      </span>
+                    `,
+          )
+          .join("");
+      }
+
+      function validateLanguagesDropdown() {
+        const ok = selectedLanguages.size > 0;
+        const showError = doctorForm.classList.contains("was-validated");
+        langMulti.classList.toggle("is-invalid", !ok && showError);
+        langError.style.display = !ok && showError ? "block" : "none";
+        return ok;
+      }
+
+      function clearLanguagesUI() {
+        selectedLanguages.clear();
+        langSearch.value = "";
+        renderLanguageList("");
+        renderLanguageBadges();
+        validateLanguagesDropdown();
+      }
+
+      function setLanguagesFromCSV(csv) {
+        selectedLanguages.clear();
+        String(csv || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+          .forEach((l) => selectedLanguages.add(l));
+
+        langSearch.value = "";
+        renderLanguageList("");
+        renderLanguageBadges();
+        validateLanguagesDropdown();
+      }
+
+      function getLanguagesCSV() {
+        return Array.from(selectedLanguages).join(", ");
+      }
+
+      // interactions
+      langList.addEventListener("click", (e) => {
+        const item = e.target.closest(".dd-item");
+        if (!item) return;
+        const lang = item.dataset.lang;
+
+        if (selectedLanguages.has(lang)) selectedLanguages.delete(lang);
+        else selectedLanguages.add(lang);
+
+        renderLanguageList(langSearch.value);
+        renderLanguageBadges();
+        validateLanguagesDropdown();
+      });
+
+      langBadges.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-remove]");
+        if (!btn) return;
+        const lang = btn.dataset.remove;
+        selectedLanguages.delete(lang);
+
+        renderLanguageList(langSearch.value);
+        renderLanguageBadges();
+        validateLanguagesDropdown();
+      });
+
+      langSearch.addEventListener("input", () =>
+        renderLanguageList(langSearch.value),
+      );
+
+      // init language ui
+      renderLanguageList("");
+      renderLanguageBadges();
+
+      function renderCouncilList(filterText = "") {
+        const isHomeopathy = selectedSpecialists.has("Homeopathic Doctor");
+
+        let options = isHomeopathy ? COUNCILS2 : COUNCILS;
+
+        const hasRegn = drRegnNo.value.trim() !== "";
+
+        // =========================================
+        // STRICT RULE:
+        // If registration exists,
+        // remove "Others" completely
+        // =========================================
+        if (hasRegn) {
+          options = options.filter((c) => c !== "Others");
+        }
+
+        const q = filterText.trim().toLowerCase();
+
+        const items = options
+          .filter((c) => c.toLowerCase().includes(q))
+          .map(
+            (c) =>
+              `<div class="dropdown-item" data-value="${escapeHtml(c)}">
+                ${escapeHtml(c)}
+              </div>`,
+          )
+          .join("");
+
+        councilDropdown.innerHTML =
+          items || `<div class="dropdown-item disabled">No results</div>`;
+      }
+
+      drCouncilSearch.addEventListener("focus", () => {
+        renderCouncilList(drCouncilSearch.value);
+        councilDropdown.classList.add("show");
+      });
+
+      councilDropdown.addEventListener("click", (e) => {
+        const item = e.target.closest(".dropdown-item");
+        if (!item || item.classList.contains("disabled")) return;
+
+        const value = item.dataset.value;
+        drCouncil.value = value;
+        drCouncilSearch.value = value;
+        councilDropdown.classList.remove("show");
+        // ✅ ONLY NOW validate (after actual selection)
+        validateCouncil(); // Now shows green ✓
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest("#specialistMulti")) {
+          const specialistMenu = document.querySelector(
+            "#specialistMulti .dropdown-menu",
+          );
+
+          if (specialistMenu) {
+            specialistMenu.classList.remove("show");
+          }
+        }
+
+        if (
+          !e.target.closest("#drCouncilSearch") &&
+          !e.target.closest("#councilDropdown")
+        ) {
+          councilDropdown.classList.remove("show");
+        }
+      });
+
+      drCouncilSearch.addEventListener("input", () => {
+        // Clear invalid state during typing ONLY (no green/red)
+        drCouncilSearch.classList.remove("is-invalid", "is-valid");
+        drCouncil.classList.remove("is-invalid", "is-valid");
+        renderCouncilList(drCouncilSearch.value);
+        councilDropdown.classList.add("show");
+      });
+
+      drName.addEventListener("input", function (e) {
+        let value = e.target.value;
+        const cursorPos = e.target.selectionStart; // Save cursor position
+
+        // Fix double spaces → single space
+        const prevSpaces = (value.match(/\s+/g) || []).length;
+        value = value.replace(/\s{2,}/g, " ");
+
+        // Fix double periods → single period
+        const prevPeriods = (value.match(/\.{2,}/g) || []).length;
+        value = value.replace(/\.{2,}/g, ".");
+
+        // Restore cursor position
+        e.target.value = value;
+        e.target.setSelectionRange(cursorPos, cursorPos);
+      });
+
+      drName.addEventListener("beforeinput", (e) => {
+        if (!e.data) return;
+        const v = drName.value;
+        const pos = drName.selectionStart;
+
+        if (e.data === " " && v[pos - 1] === " ") e.preventDefault();
+        if (e.data === "." && v[pos - 1] === ".") e.preventDefault();
+      });
+
+      drMobile.addEventListener("input", () => {
+        validateMobile();
+        validateDuplicateMobile();
+      });
+
+      drCouncil.addEventListener("change", () => {
+        validateDuplicateRegnNo();
+      });
+
+      drRegnNo.addEventListener("input", validateDuplicateRegnNo);
+
+      drExperience.addEventListener("input", validateIntegers);
+      drReportingDay.addEventListener("input", validateIntegers);
+      drFees.addEventListener("input", validateIntegers);
+      drClinicCharge.addEventListener("input", validateIntegers);
+      drGoogleReviews.addEventListener("input", validateGoogleReviews);
+
+      // validate lang when dropdown closes
+      langMulti.addEventListener("hidden.bs.dropdown", () =>
+        validateLanguagesDropdown(),
+      );
+
+      // ====== Render Table ======
+      function renderTable() {
+        tbody.innerHTML = [...doctors]
+          .reverse()
+          .map((d) => {
+            // Get original index from actual array
+            const originalIndex = doctors.indexOf(d);
+
+            return `
+              <tr data-idx="${originalIndex}">
+                <td>${escapeHtml(d.DR_NAME)}</td>
+                <td>${escapeHtml(d.DR_MOBILE ?? d.DRMobile ?? "")}</td>
+                <td>${escapeHtml(d.SEX)}</td>
+                <td>${escapeHtml(d.SPECIALIST)}</td>
+                <td>${escapeHtml(d.REGN_NO)}</td>
+                <td>${escapeHtml(d["COUNCIL / STATE"])}</td>
+                <td>${escapeHtml(d.DESIGNATION)}</td>
+                <td>${escapeHtml(d.QUALIFICATION)}</td>
+                <td>${escapeHtml(d["EXPERIENCE (Year)"])}</td>
+                <td>${escapeHtml(d.LANGUAGE)}</td>
+                <td>${escapeHtml(d.REPORTING_DAY)}</td>
+                <td>${escapeHtml(d.DR_FEES)}</td>
+                <td>${escapeHtml(d.CLINIC_CHRG)}</td>
+                <td>${escapeHtml(d.PAY_TYPE)}</td>
+                <td>${escapeHtml(d.PAY_TIME)}</td>
+                <td>${escapeHtml(d.GOOGLE_REVIEWS)}</td>
+                <td>
+                  <button class="btn btn-warning btn-sm edit-btn" title="Edit">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+
+                  <button class="btn btn-danger btn-sm remove-btn" title="Remove">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        updateUiVisibility();
+      }
+
+      // ====== Modal open handlers ======
+      function resetForm() {
+        doctorForm.reset();
+        doctorForm.classList.remove("was-validated");
+        editingIndex = null;
+
+        prefixNA.checked = true;
+        prefixDr.checked = false;
+        prefixProfDr.checked = false;
+
+        prefixError.style.display = "none";
+
+        setDefaults();
+
+        clearLanguagesUI();
+        clearSpecialistsUI();
+
+        drCouncilSearch.disabled = false;
+
+        renderCouncilList("");
+        updateCouncilDropdown();
+      }
+
+      function openAddModal() {
+        resetForm();
+        doctorModalLabel.textContent = "Add Doctor";
+        modalSubmitBtn.innerHTML = "<strong>Add Doctor</strong>";
+        modalSubmitBtn.className = "btn btn-primary";
+        // Remove any previous bs-modal static-backdrop issues by hiding first
+        try {
+          doctorModal.hide();
+        } catch (e) {}
+        doctorModal.show();
+      }
+
+      function splitDoctorName(fullName = "") {
+        const v = String(fullName).trim();
+
+        if (v.startsWith("Prof. Dr.")) {
+          return {
+            prefix: "Prof. Dr.",
+            name: v.replace(/^Prof\. Dr\.\s*/, ""),
+            usedPrefix: true,
+          };
+        }
+
+        if (v.startsWith("Dr.")) {
+          return {
+            prefix: "Dr.",
+            name: v.replace(/^Dr\.\s*/, ""),
+            usedPrefix: true,
+          };
+        }
+
+        return {
+          prefix: "",
+          name: v,
+          usedPrefix: false,
+        };
+      }
+
+      function openEditModal(index) {
+        const d = doctors[index];
+
+        editingIndex = index;
+
+        doctorForm.classList.remove("was-validated");
+
+        // Parsed Name
+        const parsedName = splitDoctorName(d.DR_NAME || d.DRNAME || "");
+        //Prefix Name
+        setSelectedPrefix(parsedName.usedPrefix ? parsedName.prefix : "");
+        //Doctor Name
+        drName.value = parsedName.name;
+
+        // Mobile
+        drMobile.value = d.DR_MOBILE ?? d.DRMOBILE ?? d.DRMobile ?? "";
+
+        // Sex
+        drSex.value = d.SEX ?? "";
+
+        // Specialities
+        setSpecialistsFromCSV(d.SPECIALIST ?? d.SPECIALITIES ?? "");
+
+        // Registration
+        // drRegnNo.value = d.REGN_NO ?? d.REGNNO ?? d.REGNNO_NO ?? "";
+        const regnVal = d.REGN_NO ?? d.REGNNO ?? d.REGNNO_NO ?? "";
+
+        drRegnNo.value = regnVal;
+
+        // Council
+        const councilVal = d["COUNCIL / STATE"] ?? d["COUNCIL STATE"] ?? "";
+
+        updateCouncilDropdown(councilVal);
+
+        // drCouncilSearch.value = councilVal;
+        drCouncilSearch.value = drCouncil.value;
+
+        // Other fields
+        drDesignation.value = d.DESIGNATION ?? "";
+
+        drQualification.value = d.QUALIFICATION ?? "";
+
+        drExperience.value =
+          d["EXPERIENCE (Year)"] ?? d["EXPERIENCE Year"] ?? "";
+
+        setLanguagesFromCSV(d.LANGUAGE ?? "");
+
+        drReportingDay.value = d.REPORTING_DAY ?? d.REPORTINGDAY ?? "";
+
+        drFees.value = d.DR_FEES ?? d.DRFEES ?? "";
+
+        drClinicCharge.value = d.CLINIC_CHRG ?? d.CLINICCHRG ?? "";
+
+        drGoogleReviews.value = d.GOOGLE_REVIEWS ?? d.GOOGLEREVIEWS ?? "0";
+
+        payType.value = d.PAY_TYPE ?? d.PAYTYPE ?? "";
+
+        payTime.value = d.PAY_TIME ?? d.PAYTIME ?? "";
+
+        drMobile.classList.remove("is-invalid");
+
+        drRegnNo.classList.remove("is-invalid");
+
+        doctorModalLabel.textContent = "Edit Doctor";
+
+        modalSubmitBtn.innerHTML = "<strong>Update Doctor</strong>";
+
+        modalSubmitBtn.className = "btn btn-success";
+
+        doctorModal.show();
+      }
+
+      openAddBtn.addEventListener("click", openAddModal);
+
+      // ====== ENTER KEY: Tab-like navigation (SKIP if current field empty) ======
+      function handleEnterKey(e) {
+        if (e.key === "Enter") {
+          e.preventDefault(); // STOP form submission
+          e.stopPropagation();
+
+          // Skip buttons, dropdown search inputs, and badges
+          const skipElements = [
+            "button",
+            "select",
+            "[data-remove]",
+            "[data-remove-specialist]",
+            "#langSearch",
+            "#specialistSearch",
+            "#drCouncilSearch",
+          ];
+          if (skipElements.some((sel) => e.target.matches(sel))) return;
+
+          // **NEW: Don't move if current field is empty**
+          const currentValue = e.target.value && e.target.value.trim();
+          if (!currentValue) {
+            e.target.classList.add("is-invalid"); // Show empty field warning
+            return; // STAY on current field
+          }
+
+          // Find next focusable input in form
+          const formInputs = Array.from(
+            doctorForm.querySelectorAll(`
+                    input:not([type="hidden"]):not([readonly]),
+                    select:not([disabled])
+                  `),
+          );
+
+          const currentIndex = formInputs.indexOf(e.target);
+
+          //Focus + select content if applicable (for input/textarea)
+          if (currentIndex !== -1 && currentIndex < formInputs.length - 1) {
+            const nextInput = formInputs[currentIndex + 1];
+            nextInput.focus();
+
+            nextInput.focus();
+
+            if (
+              (nextInput.tagName === "INPUT" ||
+                nextInput.tagName === "TEXTAREA") &&
+              typeof nextInput.select === "function"
+            ) {
+              nextInput.select();
+            }
+          }
+        }
+      }
+
+      // Apply to ALL form inputs
+      ["input", "select"].forEach((tag) => {
+        doctorForm.querySelectorAll(tag).forEach((el) => {
+          el.addEventListener("keydown", handleEnterKey);
+        });
+      });
+
+      // ====== Submit ======
+      doctorForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        doctorForm.classList.add("was-validated");
+
+        // ===== Current values =====
+        const mobile = drMobile.value.trim();
+        const regn = drRegnNo.value.trim();
+
+        const hasMobile = /^[6-9]\d{9}$/.test(drMobile.value.trim());
+        const hasRegn = drRegnNo.value.trim() !== "";
+        const council = drCouncil.value.trim();
+
+        // REGN EXISTS -> Others NOT allowed
+        if (hasRegn && council === "Others") {
+          drCouncil.classList.add("is-invalid");
+          drCouncilSearch.classList.add("is-invalid");
+
+          drCouncil.setCustomValidity(
+            'Council cannot be "Others" when registration exists',
+          );
+
+          return;
+        }
+
+        // NO REGN + MOBILE EXISTS -> ONLY Others allowed
+        if (!hasRegn && hasMobile && council !== "Others") {
+          drCouncil.classList.add("is-invalid");
+          drCouncilSearch.classList.add("is-invalid");
+
+          drCouncil.setCustomValidity(
+            'Council must be "Others" when registration does not exist',
+          );
+
+          return;
+        }
+
+        // NO REGN + NO MOBILE -> reject
+        if (!hasRegn && !hasMobile) {
+          drMobile.classList.add("is-invalid");
+          drRegnNo.classList.add("is-invalid");
+
+          return;
+        }
+
+        // =====================================================
+        // Extra validations
+        // =====================================================
+        const okMobile = mobile ? validateMobile() : true;
+        const okCouncil = validateCouncil();
+        const okPrefix = validatePrefix();
+        const okSpecialists = validateSpecialists();
+        const okInts = validateIntegers();
+        const okGr = validateGoogleReviews();
+        const okDupMobile = mobile ? validateDuplicateMobile() : true;
+        const okDupRegn = validateDuplicateRegnNo();
+        const okLang = validateLanguagesDropdown();
+        const okName = validateDoctorName();
+
+        // ===== Final submit check =====
+        if (
+          !doctorForm.checkValidity() ||
+          !okName ||
+          !okMobile ||
+          !okCouncil ||
+          // !okSpecialist ||
+          !okPrefix ||
+          !okSpecialists ||
+          !okInts ||
+          !okGr ||
+          !okDupMobile ||
+          !okDupRegn ||
+          !okLang
+        ) {
+          return;
+        }
+
+        const payload = {
+          DR_NAME: getFullDoctorName(),
+          DR_MOBILE: drMobile.value.trim(),
+          SEX: (drSex.value || "").toUpperCase(),
+          SPECIALIST: getSpecialistsCSV(),
+          REGN_NO: drRegnNo.value.trim(),
+          "COUNCIL / STATE": drCouncil.value,
+          DESIGNATION: drDesignation.value.trim(),
+          QUALIFICATION: drQualification.value.trim(),
+          "EXPERIENCE (Year)": String(parseInt(drExperience.value, 10)),
+          LANGUAGE: getLanguagesCSV(),
+          REPORTING_DAY: String(parseInt(drReportingDay.value, 10)),
+          DR_FEES: String(parseInt(drFees.value, 10)),
+          CLINIC_CHRG: String(parseInt(drClinicCharge.value, 10)),
+          GOOGLE_REVIEWS:
+            String(drGoogleReviews.value ?? "").trim() === ""
+              ? "0"
+              : String(Number(drGoogleReviews.value)),
+          PAY_TYPE: payType.value.toLowerCase(),
+          PAY_TIME: payTime.value,
+        };
+
+        if (editingIndex === null) {
+          doctors.push(payload);
+          mobileIndex.add(payload.DR_MOBILE);
+          const regnUpper = String(payload.REGN_NO || "")
+            .trim()
+            .toUpperCase();
+          if (regnUpper) regnIndex.add(regnUpper);
+        } else {
+          const old = doctors[editingIndex];
+
+          const oldMobile = String(old.DR_MOBILE || "").trim();
+          const oldRegn = String(old.REGN_NO || "")
+            .trim()
+            .toUpperCase();
+
+          const newMobile = String(payload.DR_MOBILE || "").trim();
+          const newRegn = String(payload.REGN_NO || "")
+            .trim()
+            .toUpperCase();
+
+          if (oldMobile && oldMobile !== newMobile)
+            mobileIndex.delete(oldMobile);
+          if (newMobile) mobileIndex.add(newMobile);
+
+          if (oldRegn && oldRegn !== newRegn) regnIndex.delete(oldRegn);
+          if (newRegn) regnIndex.add(newRegn);
+
+          doctors[editingIndex] = payload;
+        }
+
+        doctorModal.hide();
+        renderTable();
+        updateUiVisibility();
+        //resetForm(); // clear form after submit
+        // doctorModalEl.addEventListener("hidden.bs.modal", () => {
+        //   resetForm();
+        // });
+      });
+
+      doctorModal._element.addEventListener("hidden.bs.modal", () => {
+        resetForm();
+      });
+
+      // ====== Table actions ======
+      tbody.addEventListener("click", (e) => {
+        const row = e.target.closest("tr");
+        if (!row) return;
+        const idx = Number(row.dataset.idx);
+
+        if (e.target.closest(".edit-btn")) openEditModal(idx);
+
+        if (e.target.closest(".remove-btn")) {
+          const d = doctors[idx];
+
+          const m = String(d.DR_MOBILE || "").trim();
+          const r = String(d.REGN_NO || "")
+            .trim()
+            .toUpperCase();
+
+          if (m) mobileIndex.delete(m);
+          if (r) regnIndex.delete(r);
+
+          doctors.splice(idx, 1);
+          renderTable();
+        }
+      });
+
+      // ====== Export ======
+      exportBtn.addEventListener("click", exportTableToExcel);
+
+      async function exportTableToExcel() {
+        if (!doctors.length) return;
+
+        const wb = new ExcelJS.Workbook();
+        wb.created = new Date();
+        const ws = wb.addWorksheet("Dr Profile");
+
+        // Excel headers = previous names (as requested)
+        const headers = [
+          "DR_NAME",
+          "DR_MOBILE",
+          "SEX",
+          "SPECIALIST",
+          "REGN_NO",
+          "COUNCIL / STATE",
+          "DESIGNATION",
+          "QUALIFICATION",
+          "EXPERIENCE (Year)",
+          "LANGUAGE",
+          "REPORTING_DAY",
+          "DR_FEES",
+          "CLINIC_CHRG",
+          "GOOGLE_REVIEWS",
+          "PAY_TYPE",
+          "PAY_TIME",
+        ];
+
+        ws.addRow(headers);
+        const headerRow = ws.getRow(1);
+        headerRow.font = { bold: true };
+        headerRow.alignment = { vertical: "middle", horizontal: "center" };
+
+        doctors.forEach((d) => ws.addRow(headers.map((h) => d[h] ?? "")));
+
+        ws.columns.forEach((col) => {
+          let max = 10;
+          col.eachCell({ includeEmpty: true }, (c) => {
+            const len = String(c.value ?? "").length + 2;
+            if (len > max) max = len;
+          });
+          col.width = Math.min(max, 40);
+        });
+
+        ws.eachRow((r) =>
+          r.eachCell((c) => {
+            c.protection = { locked: true };
+          }),
+        );
+
+        await ws.protect(EXCEL_LOCK_PASSWORD, {
+          selectLockedCells: true,
+          selectUnlockedCells: true,
+          formatCells: false,
+          formatColumns: false,
+          formatRows: false,
+          insertRows: false,
+          insertColumns: false,
+          insertHyperlinks: false,
+          deleteRows: false,
+          deleteColumns: false,
+          sort: false,
+          autoFilter: false,
+          pivotTables: false,
+        });
+
+        const buf = await wb.xlsx.writeBuffer();
+        const blob = new Blob([buf], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "doctor_profile_readonly.xlsx";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(a.href);
+      }
+
+      // init
+      setDefaults();
+      validateLanguagesDropdown();
+
+      // Initialize council dropdown on load
+      updateCouncilDropdown();
+
+      specialistSearch.addEventListener("input", () => {
+        renderSpecialistList(specialistSearch.value);
+      });
+
+      langSearch.addEventListener("input", () => {
+        // Force neutral state
+        langSearch.setCustomValidity("Type to search");
+        langSearch.classList.remove("is-valid", "is-invalid");
+        renderLanguageList(langSearch.value);
+      });
+    </script>
+  </body>
+</html>
