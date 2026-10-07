@@ -50,7 +50,6 @@
         background-color: #a9e2f7;
         padding-inline: 0.1rem;
         padding-top: 2px;
-        /* padding-bottom: 0.5rem; */
       }
 
       .row > * {
@@ -218,13 +217,13 @@
       }
 
       button,
-select,
-.btn,
-/* .form-control */
-.form-select,
-.dropdown-menu
-/* [role="button"], */
-/* [tabindex]:not([tabindex="-1"])  */ {
+  select,
+  .btn,
+  /* .form-control */
+  .form-select,
+  .dropdown-menu
+  /* [role="button"], */
+  /* [tabindex]:not([tabindex="-1"])  */ {
         cursor: pointer;
       }
 
@@ -248,7 +247,20 @@ select,
         position: relative;
       }
 
-      #specialistDropdown,
+      #specialistMulti {
+        position: relative;
+      }
+
+      #specialistMulti .dropdown-menu {
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        margin-top: 0 !important;
+        width: 100% !important;
+        transform: none !important;
+        z-index: 1060 !important;
+      }
+
       #councilDropdown {
         position: absolute !important;
         top: 100% !important;
@@ -260,7 +272,7 @@ select,
         border: 1px solid #ced4da;
         border-radius: 0 0 0.375rem 0.375rem;
         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        /* background: white; */
+        background: white;
       }
 
       .suggest-item {
@@ -298,454 +310,125 @@ select,
       }
 
       /* Remove ALL green ticks & validation from dropdown search bars */
-      #drSpecialistSearch,
+      #specialistSearch,
       #drCouncilSearch,
       #langSearch {
         background-image: none !important;
       }
 
       /* Block HTML5 :valid green tick & borders */
-      #drSpecialistSearch:valid,
+      #specialistSearch:valid,
       #drCouncilSearch:valid,
       #langSearch:valid,
-      #drSpecialistSearch:not(:placeholder-shown),
+      #specialistSearch:not(:placeholder-shown),
       #drCouncilSearch:not(:placeholder-shown),
       #langSearch:not(:placeholder-shown) {
         background-image: none !important;
-        border-color: #ced4da !important; /* Default gray */
+        border-color: #ced4da !important;
         box-shadow: none !important;
       }
 
       /* Block Bootstrap .is-valid green */
-      #drSpecialistSearch.is-valid,
+      #specialistSearch.is-valid,
       #drCouncilSearch.is-valid,
       #langSearch.is-valid {
         background-image: none !important;
-        border-color: #ced4da !important; /* Force gray */
+        border-color: #ced4da !important;
       }
 
       /* Focus state - blue only, no green */
-      #drSpecialistSearch:focus,
+      #specialistSearch:focus,
       #drCouncilSearch:focus,
       #langSearch:focus {
         background-image: none !important;
-        border-color: #86b7fe !important; /* Bootstrap focus blue */
+        border-color: #86b7fe !important;
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+      }
+
+      .form-check-input {
+        cursor: pointer;
+      }
+
+      #usePrefixChk {
+        border-color: #419cf8;
+        box-shadow: 0 0 0 0.15rem rgba(65, 156, 248, 0.25);
+      }
+
+      .prefix-options {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .prefix-options .form-check {
+        margin: 0;
+      }
+
+      .prefix-options .form-check-input {
+        cursor: pointer;
+      }
+
+      .prefix-options .form-check-label {
+        cursor: pointer;
+      }
+
+      #specialistMulti {
+        width: 100%;
+      }
+
+      #specialistMulti .dropdown-menu {
+        width: 100%;
+      }
+
+      #specialistMulti .dd-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 8px 10px;
+        border: 1px solid #f1f5f9;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      #specialistMulti .dd-item:hover {
+        background: #f8fafc;
+      }
+
+      #specialistMulti .speciality-badge {
+        background: #eef2ff;
+        color: #3730a3;
+        border: 1px solid #e0e7ff;
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+      }
+
+      #specialistMulti .speciality-badge button {
+        border: none;
+        background: transparent;
+        margin-left: 6px;
+        color: #3730a3;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      #specialistMulti .dropdown-toggle {
+        width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        text-align: left;
+      }
+
+      #specialistBtnText {
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
       }
     </style>
   </head>
-
-  <style>
-    html,
-    body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
-      background-color: #ffffffe9;
-    }
-
-    .container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 0.1rem;
-      justify-content: space-between;
-    }
-
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.2rem;
-      background-color: #a9e2f7;
-      padding-inline: 0.1rem;
-      padding-top: 2px;
-    }
-
-    .row > * {
-      padding-left: 0px;
-      padding-right: 2px;
-    }
-
-    #landpageheading {
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      width: auto;
-      height: auto;
-      flex-grow: 1;
-      flex-shrink: 1;
-      flex-basis: 0%;
-    }
-
-    .hint-container {
-      align-items: center;
-      justify-items: center;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 1rem;
-      background-color: #f5f5f5;
-    }
-
-    .hint {
-      font-size: 0.9rem;
-      color: #374151;
-      margin-top: auto;
-      margin-bottom: auto;
-      text-align: center;
-    }
-
-    .req::after {
-      content: " *";
-      color: #dc3545;
-      font-weight: 700;
-    }
-
-    .field-card {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 12px;
-    }
-
-    .form-section-title {
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: #111827;
-      margin: 6px 0 2px;
-    }
-
-    .form-section-sub {
-      font-size: 0.82rem;
-      color: #6b7280;
-      margin: 0 0 6px;
-    }
-
-    /* ---------- Languages dropdown (multi-select) ---------- */
-    .multi-dd {
-      width: 80%;
-    }
-
-    .multi-dd .dropdown-toggle {
-      width: 100%;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 10px 12px;
-      border: 1px solid #ced4da;
-      border-radius: 0.5rem;
-      background: #fff;
-    }
-
-    .multi-dd .dropdown-toggle:focus {
-      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
-    }
-
-    .multi-dd .dropdown-menu {
-      width: 100%;
-      max-height: 280px;
-      overflow: auto;
-      padding: 10px;
-      border-radius: 12px;
-    }
-
-    .multi-dd .dd-search {
-      position: sticky;
-      top: 0;
-      background: #fff;
-      padding-bottom: 8px;
-      z-index: 5;
-    }
-
-    .multi-dd .dd-search input {
-      border-radius: 10px;
-    }
-
-    .multi-dd .dd-items {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .multi-dd .dd-item {
-      display: flex;
-      gap: 2px;
-      align-items: center;
-      justify-content: start;
-      padding: 8px 10px;
-      border: 1px solid #f1f5f9;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    .multi-dd .dd-item:hover {
-      background: #f8fafc;
-    }
-
-    .multi-dd .badge-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
-    }
-
-    .multi-dd .lang-badge {
-      background: #eef2ff;
-      color: #3730a3;
-      border: 1px solid #e0e7ff;
-      padding: 5px 8px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-    }
-
-    .multi-dd .lang-badge button {
-      border: none;
-      background: transparent;
-      margin-left: 6px;
-      color: #3730a3;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .multi-dd.is-invalid .dropdown-toggle {
-      border-color: #dc3545;
-    }
-
-    /* Nice compact button text wrapping */
-    #langBtnText {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    input,
-    textarea {
-      cursor: text;
-    }
-
-    button,
-select,
-.btn,
-/* .form-control */
-.form-select,
-.dropdown-menu
-/* [role="button"], */
-/* [tabindex]:not([tabindex="-1"])  */ {
-      cursor: pointer;
-    }
-
-    /* Searchable Dropdown Styling */
-    .form-select[readonly] {
-      background-color: white;
-    }
-    input[list] {
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%236b7280'%3e%3cpath d='M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right 8px center;
-      background-size: 16px;
-    }
-    /* Datalist suggestions */
-    input[list]::-webkit-calendar-picker-indicator {
-      display: none;
-    }
-
-    /* ========== CUSTOM SPECIALIST DROPDOWN ========== */
-    .dropdown {
-      position: relative;
-    }
-
-    #specialistMulti {
-      position: relative;
-    }
-
-    #specialistMulti .dropdown-menu {
-      position: absolute !important;
-      top: 100% !important;
-      left: 0 !important;
-      margin-top: 0 !important;
-      width: 100% !important;
-      transform: none !important;
-      z-index: 1060 !important;
-    }
-
-    #councilDropdown {
-      position: absolute !important;
-      top: 100% !important;
-      left: 0 !important;
-      z-index: 1060 !important;
-      width: 100% !important;
-      max-height: 240px;
-      overflow-y: auto;
-      border: 1px solid #ced4da;
-      border-radius: 0 0 0.375rem 0.375rem;
-      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-      background: white;
-    }
-
-    .suggest-item {
-      padding: 10px 12px !important;
-      cursor: pointer !important;
-      border: none !important;
-      width: 100% !important;
-      text-align: left !important;
-    }
-
-    .suggest-item:hover {
-      background: #f8f9fa !important;
-    }
-
-    /* Make all dropdown menus scrollable */
-    .dropdown-menu {
-      max-height: 280px;
-      overflow-y: auto;
-    }
-
-    img {
-      max-width: 100px;
-      width: 5vw;
-      height: auto;
-      min-width: 50px;
-      padding-left: 2px;
-      padding-bottom: 2px;
-    }
-
-    footer {
-      padding: 0.5rem;
-      background-color: #a9e2f7;
-      border-top: 1px solid #e9ecef;
-      text-align: center;
-    }
-
-    /* Remove ALL green ticks & validation from dropdown search bars */
-    #specialistSearch,
-    #drCouncilSearch,
-    #langSearch {
-      background-image: none !important;
-    }
-
-    /* Block HTML5 :valid green tick & borders */
-    #specialistSearch:valid,
-    #drCouncilSearch:valid,
-    #langSearch:valid,
-    #specialistSearch:not(:placeholder-shown),
-    #drCouncilSearch:not(:placeholder-shown),
-    #langSearch:not(:placeholder-shown) {
-      background-image: none !important;
-      border-color: #ced4da !important;
-      box-shadow: none !important;
-    }
-
-    /* Block Bootstrap .is-valid green */
-    #specialistSearch.is-valid,
-    #drCouncilSearch.is-valid,
-    #langSearch.is-valid {
-      background-image: none !important;
-      border-color: #ced4da !important;
-    }
-
-    /* Focus state - blue only, no green */
-    #specialistSearch:focus,
-    #drCouncilSearch:focus,
-    #langSearch:focus {
-      background-image: none !important;
-      border-color: #86b7fe !important;
-      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
-    }
-
-    .form-check-input {
-      cursor: pointer;
-    }
-
-    #usePrefixChk {
-      border-color: #419cf8;
-      box-shadow: 0 0 0 0.15rem rgba(65, 156, 248, 0.25);
-    }
-
-    .prefix-options {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .prefix-options .form-check {
-      margin: 0;
-    }
-
-    .prefix-options .form-check-input {
-      cursor: pointer;
-    }
-
-    .prefix-options .form-check-label {
-      cursor: pointer;
-    }
-
-    #specialistMulti {
-      width: 100%;
-    }
-
-    #specialistMulti .dropdown-menu {
-      width: 100%;
-    }
-
-    #specialistMulti .dd-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 8px 10px;
-      border: 1px solid #f1f5f9;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    #specialistMulti .dd-item:hover {
-      background: #f8fafc;
-    }
-
-    #specialistMulti .speciality-badge {
-      background: #eef2ff;
-      color: #3730a3;
-      border: 1px solid #e0e7ff;
-      padding: 5px 8px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-    }
-
-    #specialistMulti .speciality-badge button {
-      border: none;
-      background: transparent;
-      margin-left: 6px;
-      color: #3730a3;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    #specialistMulti .dropdown-toggle {
-      width: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      text-align: left;
-    }
-
-    #specialistBtnText {
-      display: block;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-  </style>
 
   <body>
     <div class="container">
@@ -941,7 +624,7 @@ select,
 
                     <div class="col-12 col-lg-4">
                       <label class="form-label req" for="specialistMulti">
-                        Speciality
+                        Specialist
                       </label>
 
                       <div id="specialistMulti" class="multi-dd dropdown">
@@ -1244,67 +927,80 @@ select,
     <script>
       // ====== Dropdown data ======
       const SPECIALISTS = [
-        "Cardiologist",
-        "Pediatric Cardiologist",
-        "Hematologist",
-        "Dermatologist",
-        "Otolaryngologist",
         "Allergologist\/Allergist",
-        "Dentist",
-        "Nephrologist",
-        "Neurologist",
-        "Oncologist",
-        "Orthopedist",
-        "General Practitioner",
-        "Pediatrician",
-        "Psychiatrist",
-        "Diabetologist",
-        "Sexologist",
-        "Urologist",
-        "Gynecologist",
-        "Pulmonologist",
-        "Radiologist",
-        "Hepatologist",
-        "Endocrinologist",
-        "Gastroenterologist",
-        "Physiotherapist",
-        "Geriatrician",
-        "Ophthalmologist",
-        "Rheumatologist",
-        "General Surgeon",
-        "Proctologist",
-        "Plastic Surgeon",
-        "Dietitian",
-        "Physiatrist",
-        "Transplant Surgeon",
-        "Laparoscopy Surgeon",
-        "Cardiac Surgeon",
-        "Neonatologist",
-        "Pediatric Urologist",
-        "Pediatric Neurosurgeon",
         "Anesthesiologist",
-        "Speech Therapist",
-        "Homeopathic Doctor",
-        "Critical Care Specialist",
-        "Neuropsychiatrist",
-        "Optometrist",
-        "Psychologist",
-        "Ayurvedic Doctor",
-        "Consultant Physician",
         "Audiologist",
-        "Neurosurgeon",
-        "Maxillofacial Surgeon",
-        "Periodontist",
-        "Naturopathic Doctor",
-        "Pediatric Dentist",
-        "Orthodontist",
+        "Ayurvedic Doctor",
+        "Cardiac Surgeon",
+        "Cardiologist",
+        "Cardiothoracic Surgeon",
+        "Colorectal Surgeon",
+        "Consultant Physician",
+        "Critical Care Specialist",
+        "CTVS Surgeon",
+        "Dentist",
+        "Dermatologist",
+        "Diabetologist",
+        "Dietitian",
+        "Emergency Medicine Doctor",
+        "Endocrinologist",
         "Endodontist",
-        "Oral Pathologist",
-        "Prosthodontist",
-        "Vascular Surgeon",
         "Gastro Surgeon",
+        "Gastroenterologist",
+        "General Practitioner",
+        "General Surgeon",
+        "Geriatrician",
+        "Gynecologist",
+        "Hematologist",
+        "Hepatologist",
+        "Homeopathic Doctor",
+        "Interventional Cardiologist",
+        "Laparoscopy Surgeon",
+        "Maxillofacial Surgeon",
+        "Naturopathic Doctor",
+        "Neonatologist",
+        "Nephrologist",
+        "Neuropsychiatrist",
+        "Neurologist",
+        "Neurosurgeon",
         "Obstetrician",
+        "Oncologist",
+        "Ophthalmologist",
+        "Optometrist",
+        "Oral Pathologist",
+        "Orthodontist",
+        "Orthopedist",
+        "Otolaryngologist",
+        "Pediatric Cardiologist",
+        "Pediatric Dentist",
+        "Pediatric Gastroenterologist",
+        "Pediatric Nephrologist",
+        "Pediatric Neurologist",
+        "Pediatric Neurosurgeon",
+        "Pediatric Ophthalmologist",
+        "Pediatric Surgeon",
+        "Pediatric Urologist",
+        "Pediatrician",
+        "Periodontist",
+        "Physiatrist",
+        "Physiotherapist",
+        "Plastic Surgeon",
+        "Proctologist",
+        "Prosthodontist",
+        "Psychiatrist",
+        "Psychologist",
+        "Pulmonologist",
+        "Radiation Oncologist",
+        "Radiologist",
+        "Reproductive Medicine & Fertility Specialist",
+        "Rheumatologist",
+        "Sexologist",
+        "Spine Surgeon",
+        "Speech Therapist",
         "Surgical Oncologist",
+        "Transplant Surgeon",
+        "Urologist",
+        "Vascular Surgeon",
       ];
 
       // includes "Others" (conditional REGN_NO rule)
