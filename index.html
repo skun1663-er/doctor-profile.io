@@ -7,7 +7,7 @@
     <link
       rel="icon"
       type="image/png"
-      href="assets/cutedoc_favicons/favicon-96x96.png" />
+      href="https://easyhealths.com/react/apple-touch-icon.png" />
 
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -217,13 +217,13 @@
       }
 
       button,
-  select,
-  .btn,
-  /* .form-control */
-  .form-select,
-  .dropdown-menu
-  /* [role="button"], */
-  /* [tabindex]:not([tabindex="-1"])  */ {
+select,
+.btn,
+/* .form-control */
+.form-select,
+.dropdown-menu
+/* [role="button"], */
+/* [tabindex]:not([tabindex="-1"])  */ {
         cursor: pointer;
       }
 
@@ -434,11 +434,10 @@
     <div class="container">
       <div class="top-bar">
         <div id="logo">
-          <a
-            href="https://github.com/skun1663-er"
-            target="_self"
-            rel="noopener">
-            <img src="assets/cutedoc.webp" alt="doctor image" />
+          <a href="https://easyhealths.com/" target="_self" rel="noopener">
+            <img
+              src="https://easyhealths.com/react/apple-touch-icon.png"
+              alt="EasyHealths" />
           </a>
         </div>
         <div id="landpageheading">
@@ -485,9 +484,11 @@
               <th>Reporting Days</th>
               <th>Doctor Fees</th>
               <th>Clinic Charge</th>
+              <th>Google Reviews</th>
               <th>Payment Type</th>
               <th>Payment Time</th>
-              <th>Google Reviews</th>
+              <th>SPECIALISATION</th>
+              <th>ASSOCIATION</th>
               <th style="width: 110px">Action</th>
             </tr>
           </thead>
@@ -496,7 +497,6 @@
       </div>
 
       <!-- Modal -->
-
       <div
         class="modal fade"
         id="doctorModal"
@@ -661,6 +661,28 @@
                           Please select at least one speciality.
                         </div>
                       </div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <label class="form-label" for="drSpecialisation"
+                        >Specialisation</label
+                      >
+                      <input
+                        type="text"
+                        id="drSpecialisation"
+                        class="form-control"
+                        placeholder="Enter specialisation" />
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                      <label class="form-label" for="drAssociation"
+                        >Association</label
+                      >
+                      <input
+                        type="text"
+                        id="drAssociation"
+                        class="form-control"
+                        placeholder="Enter association" />
                     </div>
 
                     <div class="col-12 col-md-4">
@@ -910,12 +932,17 @@
         </div>
       </div>
 
-      <!-- footer -->
+      <!-- Footer -->
       <footer>
         &copy;2026.
         <span>
-          Created by
-          <a href="https://github.com/skun1663-er">skun</a></span
+          Powered by
+          <a
+            href="https://easytechitsolutions.com/"
+            target="_blank"
+            rel="noopener"
+            >EasyTech ITSolutions Pvt. Ltd.</a
+          ></span
         >
         | All rights reserved.
       </footer>
@@ -1238,6 +1265,84 @@
       const specialistList = document.getElementById("specialistList");
       const specialistBadges = document.getElementById("specialistBadges");
       const specialistError = document.getElementById("specialistError");
+      const drSpecialisation = document.getElementById("drSpecialisation");
+      const drAssociation = document.getElementById("drAssociation");
+      const specialistToDisId = {
+        Cardiologist: "1",
+        "Pediatric Cardiologist": "2",
+        Hematologist: "3",
+        Dermatologist: "4",
+        Otolaryngologist: "5",
+        "Allergologist/Allergist": "6",
+        Dentist: "7",
+        Nephrologist: "8",
+        Neurologist: "9",
+        Oncologist: "10",
+        Orthopedist: "11",
+        "General Practitioner": "12",
+        Pediatrician: "13",
+        Psychiatrist: "14",
+        Diabetologist: "15",
+        Sexologist: "16",
+        Urologist: "17",
+        Gynecologist: "18",
+        Pulmonologist: "19",
+        Radiologist: "20",
+        Hepatologist: "21",
+        Endocrinologist: "22",
+        Gastroenterologist: "23",
+        Physiotherapist: "24",
+        Geriatrician: "25",
+        Ophthalmologist: "26",
+        Rheumatologist: "27",
+        "General Surgeon": "28",
+        Proctologist: "29",
+        "Plastic Surgeon": "30",
+        Dietitian: "31",
+        Physiatrist: "32",
+        "Transplant Surgeon": "33",
+        "Laparoscopy Surgeon": "34",
+        "Cardiac Surgeon": "35",
+        Neonatologist: "36",
+        "Pediatric Urologist": "37",
+        "Pediatric Neurosurgeon": "38",
+        Anesthesiologist: "39",
+        "Speech Therapist": "40",
+        "Homeopathic Doctor": "41",
+        "Critical Care Specialist": "42",
+        Neuropsychiatrist: "43",
+        Optometrist: "44",
+        Psychologist: "45",
+        "Ayurvedic Doctor": "46",
+        "Consultant Physician": "47",
+        Audiologist: "48",
+        Neurosurgeon: "49",
+        "Maxillofacial Surgeon": "50",
+        Periodontist: "51",
+        "Naturopathic Doctor": "52",
+        "Pediatric Dentist": "53",
+        Orthodontist: "54",
+        Endodontist: "55",
+        "Oral Pathologist": "56",
+        Prosthodontist: "57",
+        "Vascular Surgeon": "58",
+        "Gastro Surgeon": "59",
+        Obstetrician: "60",
+        "Surgical Oncologist": "61",
+        "Interventional Cardiologist": "62",
+        "Cardiothoracic Surgeon": "63",
+        "Pediatric Surgeon": "64",
+        "Pediatric Neurologist": "65",
+        "Reproductive Medicine & Fertility Specialist": "66",
+        "Radiation Oncologist": "67",
+        "Colorectal Surgeon": "68",
+        "Emergency Medicine Doctor": "69",
+        "Pediatric Ophthalmologist": "70",
+        "CTVS Surgeon": "71",
+        "Spine Surgeon": "72",
+        "Pediatric Gastroenterologist": "73",
+        "Pediatric Nephrologist": "74",
+      };
       let selectedSpecialists = new Set();
 
       // ====== Helpers ======
@@ -1610,15 +1715,13 @@
       function setSpecialistsFromCSV(csv) {
         selectedSpecialists.clear();
 
-        String(csv || "")
+        // Single-select behavior: restore only the first valid specialist.
+        const firstValid = String(csv || "")
           .split(",")
           .map((s) => s.trim())
-          .filter(Boolean)
-          .forEach((s) => {
-            if (SPECIALISTS.includes(s)) {
-              selectedSpecialists.add(s);
-            }
-          });
+          .find((s) => SPECIALISTS.includes(s));
+
+        if (firstValid) selectedSpecialists.add(firstValid);
 
         specialistSearch.value = "";
 
@@ -1638,11 +1741,9 @@
 
         const specialist = item.dataset.specialist;
 
-        if (selectedSpecialists.has(specialist)) {
-          selectedSpecialists.delete(specialist);
-        } else {
-          selectedSpecialists.add(specialist);
-        }
+        // Allow only one specialist at a time.
+        selectedSpecialists.clear();
+        selectedSpecialists.add(specialist);
 
         renderSpecialistList(specialistSearch.value);
 
@@ -1970,19 +2071,29 @@
 
       drName.addEventListener("input", function (e) {
         let value = e.target.value;
-        const cursorPos = e.target.selectionStart; // Save cursor position
+        let cursorPos = e.target.selectionStart; // Save cursor position
+
+        // Disallow doctor titles in the Doctor Name field (case-insensitive),
+        // including typed text and pasted content at the beginning.
+        const titlePattern = /^\s*(?:dr\.|prof\.)(?:\s+|$)/i;
+        const titleMatch = value.match(titlePattern);
+        if (titleMatch) {
+          value = value.replace(titlePattern, "");
+          cursorPos = Math.max(0, cursorPos - titleMatch[0].length);
+        }
 
         // Fix double spaces → single space
-        const prevSpaces = (value.match(/\s+/g) || []).length;
         value = value.replace(/\s{2,}/g, " ");
 
         // Fix double periods → single period
-        const prevPeriods = (value.match(/\.{2,}/g) || []).length;
         value = value.replace(/\.{2,}/g, ".");
 
         // Restore cursor position
         e.target.value = value;
-        e.target.setSelectionRange(cursorPos, cursorPos);
+        e.target.setSelectionRange(
+          Math.min(cursorPos, value.length),
+          Math.min(cursorPos, value.length),
+        );
       });
 
       drName.addEventListener("beforeinput", (e) => {
@@ -2039,9 +2150,11 @@
                 <td>${escapeHtml(d.REPORTING_DAY)}</td>
                 <td>${escapeHtml(d.DR_FEES)}</td>
                 <td>${escapeHtml(d.CLINIC_CHRG)}</td>
+                <td>${escapeHtml(d.GOOGLE_REVIEWS)}</td>
                 <td>${escapeHtml(d.PAY_TYPE)}</td>
                 <td>${escapeHtml(d.PAY_TIME)}</td>
-                <td>${escapeHtml(d.GOOGLE_REVIEWS)}</td>
+                <td>${escapeHtml(d.SPECIALISATION)}</td>
+                <td>${escapeHtml(d.ASSOCIATION)}</td>
                 <td>
                   <button class="btn btn-warning btn-sm edit-btn" title="Edit">
                     <i class="bi bi-pencil"></i>
@@ -2159,6 +2272,8 @@
 
         // Other fields
         drDesignation.value = d.DESIGNATION ?? "";
+        drSpecialisation.value = d.SPECIALISATION ?? "";
+        drAssociation.value = d.ASSOCIATION ?? "";
 
         drQualification.value = d.QUALIFICATION ?? "";
 
@@ -2306,6 +2421,18 @@
         const okCouncil = validateCouncil();
         const okPrefix = validatePrefix();
         const okSpecialists = validateSpecialists();
+        const unmappedSpecialists = Array.from(selectedSpecialists).filter(
+          (s) => !specialistToDisId[s],
+        );
+        if (unmappedSpecialists.length) {
+          specialistError.textContent =
+            "DIS_ID mapping missing for: " + unmappedSpecialists.join(", ");
+          specialistError.style.display = "block";
+        } else {
+          specialistError.textContent =
+            "Please select at least one speciality.";
+        }
+        const okDisId = unmappedSpecialists.length === 0;
         const okInts = validateIntegers();
         const okGr = validateGoogleReviews();
         const okDupMobile = mobile ? validateDuplicateMobile() : true;
@@ -2322,6 +2449,7 @@
           // !okSpecialist ||
           !okPrefix ||
           !okSpecialists ||
+          !okDisId ||
           !okInts ||
           !okGr ||
           !okDupMobile ||
@@ -2336,6 +2464,11 @@
           DR_MOBILE: drMobile.value.trim(),
           SEX: (drSex.value || "").toUpperCase(),
           SPECIALIST: getSpecialistsCSV(),
+          DIS_ID: Array.from(selectedSpecialists)
+            .map((s) => specialistToDisId[s])
+            .join(", "),
+          SPECIALISATION: drSpecialisation.value.trim(),
+          ASSOCIATION: drAssociation.value.trim(),
           REGN_NO: drRegnNo.value.trim(),
           "COUNCIL / STATE": drCouncil.value,
           DESIGNATION: drDesignation.value.trim(),
@@ -2425,6 +2558,24 @@
 
       async function exportTableToExcel() {
         if (!doctors.length) return;
+        const invalidDoctors = doctors.filter((d) => {
+          const specialists = String(d.SPECIALIST || "")
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean);
+          return (
+            specialists.some((s) => !specialistToDisId[s]) ||
+            specialists.map((s) => specialistToDisId[s]).join(", ") !==
+              String(d.DIS_ID || "")
+          );
+        });
+        if (invalidDoctors.length) {
+          alert(
+            "Excel export blocked: DIS_ID is missing or mismatched for " +
+              invalidDoctors.map((d) => d.DR_NAME).join(", "),
+          );
+          return;
+        }
 
         const wb = new ExcelJS.Workbook();
         wb.created = new Date();
@@ -2448,6 +2599,9 @@
           "GOOGLE_REVIEWS",
           "PAY_TYPE",
           "PAY_TIME",
+          "DIS_ID",
+          "SPECIALISATION",
+          "ASSOCIATION",
         ];
 
         ws.addRow(headers);
